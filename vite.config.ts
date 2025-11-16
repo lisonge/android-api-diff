@@ -1,0 +1,46 @@
+import legacy from '@vitejs/plugin-legacy';
+import vue from '@vitejs/plugin-vue';
+import process from 'node:process';
+import unocss from 'unocss/vite';
+import { defineConfig } from 'vite';
+import type { ESBuildOptions } from 'vite';
+
+// support top-level-await
+const chromeVersion = 89;
+const host = '127.0.0.1';
+const port = 8920;
+
+export default defineConfig(() => {
+  return {
+    plugins: [
+      vue(),
+      unocss({ inspector: false }),
+      legacy({
+        renderLegacyChunks: false,
+        modernPolyfills: true,
+        modernTargets: `chrome>=${chromeVersion}`,
+      }),
+    ],
+    resolve: {
+      alias: {
+        '@': process.cwd() + '/src',
+      },
+    },
+    server: {
+      host,
+      port,
+    },
+    preview: {
+      host,
+      port,
+    },
+    build: {
+      target: `chrome${chromeVersion}`,
+      sourcemap: true,
+      chunkSizeWarningLimit: Number.MAX_SAFE_INTEGER,
+    },
+    esbuild: {
+      legalComments: 'none',
+    } as ESBuildOptions,
+  };
+});
