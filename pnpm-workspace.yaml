@@ -1,3 +1,7 @@
+packages:
+  - syntax
+  - web
+
 onlyBuiltDependencies:
   - core-js
   - esbuild

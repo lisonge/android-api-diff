@@ -5,8 +5,6 @@ import unocss from 'unocss/vite';
 import { defineConfig } from 'vite';
 import type { ESBuildOptions } from 'vite';
 
-// support top-level-await
-const chromeVersion = 89;
 const host = '127.0.0.1';
 const port = 8920;
 
@@ -18,7 +16,6 @@ export default defineConfig(() => {
       legacy({
         renderLegacyChunks: false,
         modernPolyfills: true,
-        modernTargets: `chrome>=${chromeVersion}`,
       }),
     ],
     resolve: {
@@ -35,7 +32,6 @@ export default defineConfig(() => {
       port,
     },
     build: {
-      target: `chrome${chromeVersion}`,
       sourcemap: true,
       chunkSizeWarningLimit: Number.MAX_SAFE_INTEGER,
     },

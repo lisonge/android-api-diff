@@ -1,0 +1,10 @@
+{
+  "name": "web",
+  "type": "module",
+  "dependencies": {
+    "@ikun/syntax": "workspace:*"
+  },
+  "volta": {
+    "extends": "../package.json"
+  }
+}

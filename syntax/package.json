@@ -1,0 +1,9 @@
+{
+  "name": "@ikun/syntax",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "volta": {
+    "extends": "../package.json"
+  }
+}

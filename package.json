@@ -1,15 +1,11 @@
 {
   "name": "android-api-diff",
   "type": "module",
-  "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "volta": {
-    "node": "24.11.1",
-    "pnpm": "10.22.0"
+    "dev": "pnpm -F web exec vite",
+    "build": "pnpm -F web exec vite build",
+    "preview": "pnpm -F web exec vite preview",
+    "format": "prettier --cache --write --ignore-unknown ."
   },
   "dependencies": {
     "@tsconfig/node20": "20.1.7",
@@ -18,12 +14,20 @@
     "@vitejs/plugin-vue": "6.0.1",
     "@vue/tsconfig": "0.8.1",
     "@vueuse/core": "14.0.0",
+    "antlr4": "4.13.2",
     "localforage": "1.10.0",
     "normalize.css": "8.0.1",
+    "p-limit": "7.2.0",
+    "prettier": "3.6.2",
     "tsx": "4.20.6",
     "typescript": "5.9.3",
     "unocss": "66.5.6",
     "vite": "7.2.2",
-    "vue": "3.5.24"
+    "vue": "3.5.24",
+    "vue-router": "4.6.3"
+  },
+  "volta": {
+    "node": "24.11.1",
+    "pnpm": "10.23.0"
   }
 }

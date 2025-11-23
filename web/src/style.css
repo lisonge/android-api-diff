@@ -1,3 +1,8 @@
+:root {
+  --page-h: max(100vh, 700px);
+  --page-w: max(100vw, 1200px);
+}
+
 [hidden-scrollbar]::-webkit-scrollbar {
   display: none;
 }

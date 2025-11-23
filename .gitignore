@@ -27,6 +27,11 @@ coverage
 *.sln
 *.sw?
 .env
+.cache
+
+.antlr
+*.interp
+*.tokens
 
 vite.config.{js,ts}.timestamp-*.mjs
 
