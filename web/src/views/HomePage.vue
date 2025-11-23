@@ -223,7 +223,7 @@ const handleExample = (item: ExampleItem) => {
   inputUrl.value = item.url;
   searchForm.targetName = item.targetName;
   searchForm.propName = item.propName;
-  setTimeout(handleDiff.invoke, 1000);
+  setTimeout(handleDiff.invoke, 500);
 };
 </script>
 <template>
@@ -250,6 +250,15 @@ const handleExample = (item: ExampleItem) => {
         </div>
       </div>
       <div v-if="estimateDesc" text-14px>{{ estimateDesc }}</div>
+      <a
+        href="https://github.com/lisonge/android-api-diff"
+        target="_blank"
+        text-black
+        transition-color
+        hover="color-[rgb(from_currentColor_r_g_b_/_50%)]"
+      >
+        <SvgIcon name="github" size-20px />
+      </a>
     </div>
     <div flex gap-24px>
       <input
