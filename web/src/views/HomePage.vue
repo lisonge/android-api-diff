@@ -403,7 +403,7 @@ const handleExample = (item: ExampleItem) => {
       </div>
     </div>
   </div>
-  <div v-else py-16px pt-80px pb-16px text-center text-14px>
-    初始化列表中...
+  <div v-else py-16px pt-80px pb-16px flex flex-col items-center>
+    <SvgIcon name="loading" size-32px />
   </div>
 </template>
