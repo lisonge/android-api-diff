@@ -5,8 +5,8 @@ interface AndroidVersionItem {
 }
 
 interface VersionUrlBuilder {
-  replaceUrl: (tag: string) => string;
   filePath: string;
+  templateUrl: [string, string];
 }
 
 interface ExampleItem {
@@ -15,4 +15,22 @@ interface ExampleItem {
   targetName: string;
   propName: string;
   refName: string;
+}
+
+interface DiffResultItem {
+  tag: string;
+  interfaces: ClassStruct[];
+  typeDesc: string;
+  typeColor: string;
+}
+
+interface DiffTypeItem {
+  typeDesc: string;
+  typeColor: string;
+  tagRanges: string[][];
+}
+interface SearchFromData {
+  targetUrl: string;
+  targetName: string;
+  targetProp: string;
 }

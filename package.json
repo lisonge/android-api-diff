@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@tsconfig/node20": "20.1.7",
+    "@types/lodash-es": "4.17.12",
     "@types/node": "24.10.1",
     "@vitejs/plugin-legacy": "7.2.1",
     "@vitejs/plugin-vue": "6.0.1",
@@ -17,6 +18,7 @@
     "@vueuse/router": "14.0.0",
     "antlr4": "4.13.2",
     "localforage": "1.10.0",
+    "lodash-es": "4.17.21",
     "normalize.css": "8.0.1",
     "p-limit": "7.2.0",
     "prettier": "3.6.2",

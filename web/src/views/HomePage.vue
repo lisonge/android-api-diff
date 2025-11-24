@@ -1,27 +1,26 @@
 <script setup lang="ts">
 import SvgIcon from '@/components/SvgIcon.vue';
 import {
+  aidlJavaFiles,
   estimateDesc,
   exampleList,
   fileStructsMap,
   pullStructsByUrl,
-  searchFilePathByName,
+  searchFilePathByRefName,
 } from '@/store';
-import { colors, useTask } from '@/utils';
+import { colors, findStructByName, useEqualComputed, useTask } from '@/utils';
+import androidVersionList from '@/utils/android.data';
 import { emptyArray } from '@/utils/constant';
 import { getVersionUrlBuilder } from '@/utils/url';
-import type { ClassStruct } from '@ikun/syntax';
-import { refDebounced } from '@vueuse/core';
-import pLimit from 'p-limit';
-import { computed, onScopeDispose, onUnmounted, watch } from 'vue';
+import { useLocalStorage, useTitle, watchDebounced } from '@vueuse/core';
 import { useRouteQuery } from '@vueuse/router';
-import androidVersionList from '@/utils/android.data';
+import { computed, onUnmounted, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
-let alive = true;
-onScopeDispose(() => (alive = false));
-
+const title = useTitle();
 const androidOrderTags = androidVersionList.flatMap((v) => v.tags);
-const mode = useRouteQuery<'file' | 'ref'>('mode', 'file');
+
+const mode = useLocalStorage<'file' | 'ref'>('mode', 'file');
 const isRefMode = computed({
   get: () => mode.value === 'ref',
   set: (v: boolean) => {
@@ -29,7 +28,6 @@ const isRefMode = computed({
   },
 });
 const searchUrl = useRouteQuery<string>('url', '');
-const lazySearchUrl = refDebounced(searchUrl);
 const searchName = useRouteQuery<string>('name', '');
 const searchProp = useRouteQuery<string>('prop', '');
 watch(searchUrl, () => {
@@ -42,18 +40,23 @@ watch(searchName, () => {
     searchProp.value = '';
   }
 });
-const searchRef = useRouteQuery<string>('ref', '');
-const lazySearchRef = refDebounced(searchRef);
-watch(lazySearchRef, (v) => {
-  console.log(searchFilePathByName(v));
+watchDebounced(searchUrl, (v) => {
+  if (v.match(/\w\.(java)|(aidl)\b/)) {
+    searchName.value = v.split('/').at(-1)!.replace(/\..+$/g, '');
+  }
 });
-const resetState = () => {
-  searchName.value = '';
-  searchProp.value = '';
-  searchRef.value = '';
-  searchUrl.value = '';
+const searchRef = useRouteQuery<string>('ref', '');
+if (searchRef.value) {
+  isRefMode.value = true;
+} else if (searchUrl.value) {
+  isRefMode.value = false;
+}
+const router = useRouter();
+const switchRefMode = () => {
+  isRefMode.value = !isRefMode.value;
+  router.replace({ query: {} });
 };
-watch(isRefMode, resetState);
+
 const actualMainInput = computed({
   get() {
     return isRefMode.value ? searchRef.value : searchUrl.value;
@@ -67,67 +70,46 @@ const actualMainInput = computed({
   },
 });
 
-const urlBuilder = computed(() => getVersionUrlBuilder(lazySearchUrl.value));
+const emptySearchFromData: SearchFromData = {
+  targetUrl: '',
+  targetName: '',
+  targetProp: '',
+};
+
+const searchFromData = useEqualComputed<SearchFromData>(() => {
+  if (isRefMode.value) {
+    return searchFilePathByRefName(searchRef.value) ?? emptySearchFromData;
+  } else {
+    return {
+      targetUrl: searchUrl.value,
+      targetName: searchName.value,
+      targetProp: searchProp.value,
+    };
+  }
+});
+
+const urlBuilder = useEqualComputed(() =>
+  getVersionUrlBuilder(searchFromData.value.targetUrl),
+);
+
 const isCanParsedUrl = computed(() => {
   const builder = urlBuilder.value;
   if (!builder) return false;
+  const f = builder.filePath.substring('/'.length);
   return (
-    builder.filePath.endsWith('.java') || builder.filePath.endsWith('.aidl')
+    (f.endsWith('.java') || f.endsWith('.aidl')) &&
+    aidlJavaFiles.value.includes(f)
   );
 });
-const getReplaceUrl = (tag: string): string => {
-  return urlBuilder.value?.replaceUrl(tag) || '';
-};
-const title = document.title;
-interface DiffResultItem {
-  tag: string;
-  interfaces: ClassStruct[];
-  typeDesc: string;
-  typeColor: string;
-}
 
-watch(lazySearchUrl, () => {
-  const v = lazySearchUrl.value;
-  if (v.match(/\w\.(java)|(aidl)\b/)) {
-    searchName.value = lazySearchUrl.value
-      .split('/')
-      .at(-1)!
-      .replace(/\..+$/g, '');
-  }
-});
-
-let stopFlag = 0;
-interface DiffTypeItem {
-  typeDesc: string;
-  typeColor: string;
-  tagRanges: string[][];
-}
-
-const limit = pLimit(5);
-const findStructByName = (
-  list: ClassStruct[] | undefined,
-  name: string,
-): ClassStruct | undefined => {
-  if (!list?.length) return;
-  const v = list.find((v) => v.name === name);
-  if (v) return v;
-  for (const struct of list) {
-    const v2 = findStructByName(struct.children, name);
-    if (v2) return v2;
-  }
+const getTemplateUrlUrl = (tag: string): string => {
+  const t = urlBuilder.value?.templateUrl;
+  if (!t) return '';
+  return t[0] + tag + t[1];
 };
 
-const lazySearchForm = (() => {
-  const t = computed(
-    () => [searchName.value.trim(), searchProp.value.trim()] as const,
-  );
-  watch(
-    () => t.value.join('|'),
-    () => colorCache.clear(),
-  );
-  return refDebounced(t);
-})();
 const colorCache = new Map<string, string>();
+watch(searchFromData, () => colorCache.clear());
 const getCachedTypeColor = (key: string) => {
   if (!key) return '#000';
   const v = colorCache.get(key);
@@ -141,7 +123,8 @@ const getCachedTypeColor = (key: string) => {
 const diffResultList = computed<DiffResultItem[]>(() => {
   const builder = urlBuilder.value;
   if (!builder?.filePath) return emptyArray;
-  const [targetName, propName] = lazySearchForm.value;
+  const targetName = searchFromData.value.targetName;
+  const propName = searchFromData.value.targetProp;
   if (!targetName || !propName || !isCanParsedUrl.value) return emptyArray;
   return androidOrderTags
     .map((tag) => {
@@ -200,30 +183,25 @@ const diffTypeReult = computed<DiffTypeItem[]>(() => {
   return list;
 });
 
-const handleDiff = useTask(async () => {
-  if (!urlBuilder.value) return;
-  if (!searchName.value || !searchProp.value) return;
-  if (!isCanParsedUrl.value) return;
-  const builder = urlBuilder.value;
-  const tempStopFlag = (stopFlag = Date.now());
-  const handleTag = async (tag: string) => {
-    if (!alive) return;
-    if (stopFlag !== tempStopFlag) return;
-    const filePath = tag + builder.filePath;
-    await limit(() => {
-      if (stopFlag !== tempStopFlag) return;
-      return pullStructsByUrl(filePath);
-    });
-    if (stopFlag !== tempStopFlag) return;
-  };
-  for (const item of androidVersionList) {
-    await Promise.all(item.tags.map((v) => handleTag(v)));
-  }
-});
+let signal = new AbortController();
 const stopDiff = () => {
-  stopFlag++;
+  signal.abort();
+  signal = new AbortController();
 };
 onUnmounted(stopDiff);
+
+const handleDiff = useTask(async () => {
+  if (!urlBuilder.value) return;
+  const s = signal;
+  const builder = urlBuilder.value;
+  for (const item of androidVersionList) {
+    if (s.signal.aborted) return;
+    await Promise.all(
+      item.tags.map((tag) => pullStructsByUrl(tag + builder.filePath, s)),
+    );
+  }
+});
+setTimeout(handleDiff.invoke, 300);
 
 const handleExample = (item: ExampleItem) => {
   if (handleDiff.loading) return;
@@ -234,7 +212,7 @@ const handleExample = (item: ExampleItem) => {
     searchName.value = item.targetName;
     searchProp.value = item.propName;
   }
-  setTimeout(handleDiff.invoke, 500);
+  setTimeout(handleDiff.invoke, 300);
 };
 </script>
 <template>
@@ -260,17 +238,6 @@ const handleExample = (item: ExampleItem) => {
           </div>
         </div>
       </div>
-      <div
-        v-if="0"
-        px-2px
-        cursor-pointer
-        transition-colors
-        rounded-4px
-        hover="color-[rgb(from_currentColor_r_g_b_/_50%)] bg-gray-100"
-        @click="isRefMode = !isRefMode"
-      >
-        {{ mode.toUpperCase() }}
-      </div>
       <div v-if="estimateDesc" flex items-center gap-4px>
         <SvgIcon name="database" size-20px />
         <div text-14px>{{ estimateDesc }}</div>
@@ -285,7 +252,18 @@ const handleExample = (item: ExampleItem) => {
         <SvgIcon name="github" size-20px />
       </a>
     </div>
-    <div flex gap-24px>
+    <div flex gap-24px items-center>
+      <div title="switch search mode">
+        <SvgIcon
+          name="exchange"
+          size-24px
+          cursor-pointer
+          transition-colors
+          rounded-4px
+          hover="color-[rgb(from_currentColor_r_g_b_/_50%)] bg-gray-100"
+          @click="switchRefMode"
+        />
+      </div>
       <input
         flex="[4]"
         type="text"
@@ -361,6 +339,7 @@ const handleExample = (item: ExampleItem) => {
         flex
         items-center
         gap-4px
+        text-16px
         cursor-pointer
         :class="{
           'cursor-not-allowed!': !isCanParsedUrl,
@@ -423,7 +402,7 @@ const handleExample = (item: ExampleItem) => {
             ></div>
             <a
               v-if="urlBuilder"
-              :href="getReplaceUrl(tag)"
+              :href="getTemplateUrlUrl(tag)"
               target="_blank"
               hover="color-[rgb(from_currentColor_r_g_b_/_50%)]"
               whitespace-nowrap

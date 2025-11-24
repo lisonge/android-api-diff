@@ -1,4 +1,11 @@
-import { customRef, shallowReactive, watch } from 'vue';
+import type { ClassStruct } from '@ikun/syntax';
+import {
+  computed,
+  customRef,
+  shallowReactive,
+  watch,
+  type ComputedRef,
+} from 'vue';
 
 interface TaskHandler<T extends (...args: any[]) => Promise<void>> {
   fn: T;
@@ -84,3 +91,35 @@ export const colors = [
   '#C684EB',
   '#7833FE',
 ];
+
+export const findStructByName = (
+  list: ClassStruct[] | undefined,
+  name: string,
+): ClassStruct | undefined => {
+  if (!list?.length) return;
+  const v = list.find((v) => v.name === name);
+  if (v) return v;
+  for (const struct of list) {
+    const v2 = findStructByName(struct.children, name);
+    if (v2) return v2;
+  }
+};
+
+export const getBeforeString = (str: string, sub: string): string => {
+  const index = str.indexOf(sub);
+  if (index < 0) return str;
+  return str.substring(0, index);
+};
+
+import { isEqual } from 'lodash-es';
+
+export const useEqualComputed = <T>(fn: () => T): ComputedRef<T> => {
+  let lastValue: T;
+  return computed<T>(() => {
+    const v = fn();
+    if (!isEqual(v, lastValue)) {
+      lastValue = v;
+    }
+    return lastValue;
+  });
+};
