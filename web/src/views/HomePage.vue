@@ -12,7 +12,12 @@ import { colors, findStructByName, useEqualComputed, useTask } from '@/utils';
 import androidVersionList from '@/utils/android.data';
 import { emptyArray } from '@/utils/constant';
 import { getVersionUrlBuilder } from '@/utils/url';
-import { useLocalStorage, useTitle, watchDebounced } from '@vueuse/core';
+import {
+  useLocalStorage,
+  useTitle,
+  watchDebounced,
+  watchImmediate,
+} from '@vueuse/core';
 import { useRouteQuery } from '@vueuse/router';
 import { computed, onUnmounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -191,8 +196,14 @@ const stopDiff = () => {
 onUnmounted(stopDiff);
 
 const handleDiff = useTask(async () => {
-  if (!urlBuilder.value) return;
   const s = signal;
+  if (isRefMode.value) {
+    while (aidlJavaFiles.value.length === 0) {
+      await new Promise((r) => setTimeout(r));
+      if (s.signal.aborted) return;
+    }
+  }
+  if (!urlBuilder.value) return;
   const builder = urlBuilder.value;
   for (const item of androidVersionList) {
     if (s.signal.aborted) return;
@@ -201,7 +212,7 @@ const handleDiff = useTask(async () => {
     );
   }
 });
-setTimeout(handleDiff.invoke, 300);
+setTimeout(handleDiff.invoke);
 
 const handleExample = (item: ExampleItem) => {
   if (handleDiff.loading) return;
