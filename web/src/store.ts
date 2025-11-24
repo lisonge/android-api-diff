@@ -68,21 +68,21 @@ export const exampleList: ExampleItem[] = [
     url: 'https://cs.android.com/android/platform/superproject/+/main:frameworks/base/core/java/android/app/IActivityTaskManager.aidl',
     targetName: 'IActivityTaskManager',
     propName: 'getTasks',
-    refName: 'android.app.IActivityTaskManager#getTasks',
+    refName: 'IActivityTaskManager#getTasks',
   },
   {
     title: 'ITaskStackListener#onTaskMovedToFront',
     url: 'https://github.com/aosp-mirror/platform_frameworks_base/blob/android12-dev/core/java/android/app/ITaskStackListener.aidl',
     targetName: 'ITaskStackListener',
     propName: 'onTaskMovedToFront',
-    refName: 'android.app.ITaskStackListener#onTaskMovedToFront',
+    refName: 'ITaskStackListener#onTaskMovedToFront',
   },
   {
     title: 'IUserManager#getUsers',
     url: 'https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/core/java/android/os/IUserManager.aidl',
     targetName: 'IUserManager',
     propName: 'getUsers',
-    refName: 'android.os.IUserManager#getUsers',
+    refName: 'IUserManager#getUsers',
   },
 ];
 
