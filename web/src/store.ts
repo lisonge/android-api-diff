@@ -25,11 +25,13 @@ export const pullStructsByUrl = async (
   const temp = fileStructsMap[filePath];
   if (temp) return temp;
   const list = await getOrSetStructCache(filePath, async () => {
-    if (signal.signal.aborted) {
-      throw new Error('aborted');
-    }
     const url = mirrorContentBaseUrl + filePath;
-    const text = await limit(() => persistentFetch(url));
+    const text = await limit(() => {
+      if (signal.signal.aborted) {
+        throw new Error('aborted');
+      }
+      return persistentFetch(url);
+    });
     let list: ClassStruct[] = [];
     if (text.startsWith('404:')) {
     } else if (url.endsWith('.aidl')) {
@@ -40,7 +42,7 @@ export const pullStructsByUrl = async (
       // unsupported file type
     }
     return list;
-  }).catch(() => undefined);
+  }).catch(() => {});
   if (!list) return emptyArray;
   fileStructsMap[filePath] = list;
   return list;
