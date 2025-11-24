@@ -388,7 +388,7 @@ const handleExample = (item: ExampleItem) => {
         </div>
       </div>
     </div>
-    <div flex gap-8px overflow-scroll hidden-scrollbar>
+    <div flex gap-16px overflow-scroll hidden-scrollbar>
       <div
         v-for="item in androidVersionList"
         :key="item.version"
@@ -396,11 +396,11 @@ const handleExample = (item: ExampleItem) => {
         flex
         flex-col
         items-center
-        px-4px
       >
         <div h-2px bg-red-200 w-full></div>
-        <div text-14px text-center :title="item.alias">
-          {{ item.version }}
+        <div text-12px font-600 flex justify-center gap-4px>
+          <div>{{ item.version }}</div>
+          <div>{{ item.alias }}</div>
         </div>
         <div flex flex-col gap-4px>
           <div v-for="tag in item.tags" :key="tag" flex gap-4px items-center>
