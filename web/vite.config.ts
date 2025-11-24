@@ -2,6 +2,7 @@ import legacy from '@vitejs/plugin-legacy';
 import vue from '@vitejs/plugin-vue';
 import process from 'node:process';
 import unocss from 'unocss/vite';
+import data from 'unplugin-data/vite';
 import { defineConfig } from 'vite';
 import type { ESBuildOptions } from 'vite';
 
@@ -11,6 +12,7 @@ const port = 8920;
 export default defineConfig(() => {
   return {
     plugins: [
+      data(),
       vue(),
       unocss({ inspector: false }),
       legacy({

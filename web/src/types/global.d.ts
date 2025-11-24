@@ -1,4 +1,4 @@
-interface TagItem {
+interface AndroidVersionItem {
   version: string;
   alias: string;
   tags: string[];

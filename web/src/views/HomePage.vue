@@ -6,7 +6,6 @@ import {
   fileStructsMap,
   pullStructsByUrl,
   searchFilePathByName,
-  tagItems,
 } from '@/store';
 import { colors, useTask } from '@/utils';
 import { emptyArray } from '@/utils/constant';
@@ -15,11 +14,13 @@ import { type ClassStruct } from '@ikun/syntax';
 import { refDebounced } from '@vueuse/core';
 import pLimit from 'p-limit';
 import { computed, onScopeDispose, onUnmounted, watch } from 'vue';
-import { flatedTags } from '../store';
 import { useRouteQuery } from '@vueuse/router';
+import androidVersionList from '@/utils/android.data';
 
 let alive = true;
 onScopeDispose(() => (alive = false));
+
+const androidOrderTags = androidVersionList.flatMap((v) => v.tags);
 const mode = useRouteQuery<'file' | 'ref'>('mode', 'file');
 const isRefMode = computed({
   get: () => mode.value === 'ref',
@@ -142,7 +143,7 @@ const diffResultList = computed<DiffResultItem[]>(() => {
   if (!builder?.filePath) return emptyArray;
   const [targetName, propName] = lazySearchForm.value;
   if (!targetName || !propName || !isCanParsedUrl.value) return emptyArray;
-  return flatedTags.value
+  return androidOrderTags
     .map((tag) => {
       const structs = fileStructsMap[tag + builder.filePath];
       if (!structs) return;
@@ -172,7 +173,7 @@ const getDiffResult = (tag: string): DiffResultItem | undefined => {
 
 const diffTypeReult = computed<DiffTypeItem[]>(() => {
   const list: DiffTypeItem[] = [];
-  flatedTags.value.forEach((tag, index) => {
+  androidOrderTags.forEach((tag, index) => {
     const res = getDiffResult(tag);
     if (!res) return;
     let typeItem = list.find((v) => v.typeDesc === res.typeDesc);
@@ -188,7 +189,7 @@ const diffTypeReult = computed<DiffTypeItem[]>(() => {
       typeItem.tagRanges.push([tag]);
       return;
     }
-    const lastTag = flatedTags.value[index - 1];
+    const lastTag = androidOrderTags[index - 1];
     const lastRange = typeItem.tagRanges.at(-1)!;
     if (lastRange.at(-1) === lastTag) {
       lastRange.push(tag);
@@ -200,7 +201,6 @@ const diffTypeReult = computed<DiffTypeItem[]>(() => {
 });
 
 const handleDiff = useTask(async () => {
-  if (!tagItems.value?.length) return;
   if (!urlBuilder.value) return;
   if (!searchName.value || !searchProp.value) return;
   if (!isCanParsedUrl.value) return;
@@ -216,7 +216,7 @@ const handleDiff = useTask(async () => {
     });
     if (stopFlag !== tempStopFlag) return;
   };
-  for (const item of tagItems.value) {
+  for (const item of androidVersionList) {
     await Promise.all(item.tags.map((v) => handleTag(v)));
   }
 });
@@ -238,7 +238,7 @@ const handleExample = (item: ExampleItem) => {
 };
 </script>
 <template>
-  <div v-if="tagItems" p-12px text-14px flex flex-col gap-8px>
+  <div p-12px text-14px flex flex-col gap-8px>
     <div flex items-center gap-24px>
       <div text-20px font-400>{{ title }}</div>
       <div flex-1 flex items-center gap-8px>
@@ -399,7 +399,7 @@ const handleExample = (item: ExampleItem) => {
     </div>
     <div flex gap-8px overflow-scroll hidden-scrollbar>
       <div
-        v-for="item in tagItems"
+        v-for="item in androidVersionList"
         :key="item.version"
         flex-1
         flex
@@ -435,8 +435,5 @@ const handleExample = (item: ExampleItem) => {
         </div>
       </div>
     </div>
-  </div>
-  <div v-else py-16px pt-80px pb-16px flex flex-col items-center>
-    <SvgIcon name="loading" size-32px />
   </div>
 </template>
