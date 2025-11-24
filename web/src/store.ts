@@ -128,12 +128,13 @@ export const searchFilePathByName = (name: string): string | undefined => {
 // com.android.internal.app.IAppOpsService
 // com.android.internal.app.IAppOpsService#setMode
 // android.content.pm.IPackageManager#getInstalledPackages(int, int)
+const clazzSeparator = /[#\:]+/;
 export const searchFilePathByRefName = (
   name: string,
 ): SearchFromData | undefined => {
   name = name.trim();
   if (!name) return;
-  const [clazzName, tempProp = ''] = name.split('#', 2);
+  const [clazzName, tempProp = ''] = name.split(clazzSeparator, 2);
   const targetProp = getBeforeString(tempProp, '(');
   if (!targetProp) return;
   let filePath: string | undefined;
