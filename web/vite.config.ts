@@ -19,6 +19,17 @@ export default defineConfig(() => {
         renderLegacyChunks: false,
         modernPolyfills: true,
       }),
+      {
+        name: '404Page',
+        apply: 'build',
+        enforce: 'post',
+        generateBundle(_, bundle) {
+          bundle['404.html'] = {
+            ...bundle['index.html'],
+            fileName: '404.html',
+          };
+        },
+      },
     ],
     resolve: {
       alias: {
