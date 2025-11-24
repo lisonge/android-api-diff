@@ -80,8 +80,8 @@ export const useReactiveLocalStorage = <T extends object>(
 
 export const colors = [
   '#19F61B',
-  '#63F9C0',
   '#1985FF',
+  '#63F9C0',
   '#3F049C',
   '#E88407',
   '#578065',
