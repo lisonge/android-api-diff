@@ -2,35 +2,71 @@
 import SvgIcon from '@/components/SvgIcon.vue';
 import {
   estimateDesc,
+  exampleList,
   fileStructsMap,
   pullStructsByUrl,
+  searchFilePathByName,
   tagItems,
 } from '@/store';
-import { colors, useReactiveLocalStorage, useTask } from '@/utils';
+import { colors, useTask } from '@/utils';
 import { emptyArray } from '@/utils/constant';
 import { getVersionUrlBuilder } from '@/utils/url';
 import { type ClassStruct } from '@ikun/syntax';
-import { refDebounced, set, useLocalStorage } from '@vueuse/core';
+import { refDebounced } from '@vueuse/core';
 import pLimit from 'p-limit';
-import {
-  computed,
-  onMounted,
-  onScopeDispose,
-  onUnmounted,
-  shallowRef,
-  watch,
-} from 'vue';
+import { computed, onScopeDispose, onUnmounted, watch } from 'vue';
+import { flatedTags } from '../store';
+import { useRouteQuery } from '@vueuse/router';
 
 let alive = true;
 onScopeDispose(() => (alive = false));
-const inputUrl = useLocalStorage('url', '');
-const lazyInputUrl = refDebounced(inputUrl);
-const searchForm = useReactiveLocalStorage('diff', () => ({
-  targetName: '',
-  propName: '',
-}));
+const mode = useRouteQuery<'file' | 'ref'>('mode', 'file');
+const isRefMode = computed({
+  get: () => mode.value === 'ref',
+  set: (v: boolean) => {
+    mode.value = v ? 'ref' : 'file';
+  },
+});
+const searchUrl = useRouteQuery<string>('url', '');
+const lazySearchUrl = refDebounced(searchUrl);
+const searchName = useRouteQuery<string>('name', '');
+const searchProp = useRouteQuery<string>('prop', '');
+watch(searchUrl, () => {
+  if (!searchUrl.value) {
+    searchName.value = '';
+  }
+});
+watch(searchName, () => {
+  if (!searchName.value) {
+    searchProp.value = '';
+  }
+});
+const searchRef = useRouteQuery<string>('ref', '');
+const lazySearchRef = refDebounced(searchRef);
+watch(lazySearchRef, (v) => {
+  console.log(searchFilePathByName(v));
+});
+const resetState = () => {
+  searchName.value = '';
+  searchProp.value = '';
+  searchRef.value = '';
+  searchUrl.value = '';
+};
+watch(isRefMode, resetState);
+const actualMainInput = computed({
+  get() {
+    return isRefMode.value ? searchRef.value : searchUrl.value;
+  },
+  set(v: string) {
+    if (isRefMode.value) {
+      searchRef.value = v;
+    } else {
+      searchUrl.value = v;
+    }
+  },
+});
 
-const urlBuilder = computed(() => getVersionUrlBuilder(lazyInputUrl.value));
+const urlBuilder = computed(() => getVersionUrlBuilder(lazySearchUrl.value));
 const isCanParsedUrl = computed(() => {
   const builder = urlBuilder.value;
   if (!builder) return false;
@@ -49,20 +85,16 @@ interface DiffResultItem {
   typeColor: string;
 }
 
-watch(lazyInputUrl, () => {
-  const v = lazyInputUrl.value;
+watch(lazySearchUrl, () => {
+  const v = lazySearchUrl.value;
   if (v.match(/\w\.(java)|(aidl)\b/)) {
-    searchForm.targetName = lazyInputUrl.value
+    searchName.value = lazySearchUrl.value
       .split('/')
       .at(-1)!
       .replace(/\..+$/g, '');
   }
 });
 
-const flatedTags = computed<string[]>(() => {
-  if (!tagItems.value?.length) return emptyArray;
-  return tagItems.value.flatMap((v) => v.tags);
-});
 let stopFlag = 0;
 interface DiffTypeItem {
   typeDesc: string;
@@ -86,7 +118,7 @@ const findStructByName = (
 
 const lazySearchForm = (() => {
   const t = computed(
-    () => [searchForm.targetName.trim(), searchForm.propName.trim()] as const,
+    () => [searchName.value.trim(), searchProp.value.trim()] as const,
   );
   watch(
     () => t.value.join('|'),
@@ -170,7 +202,7 @@ const diffTypeReult = computed<DiffTypeItem[]>(() => {
 const handleDiff = useTask(async () => {
   if (!tagItems.value?.length) return;
   if (!urlBuilder.value) return;
-  if (!searchForm.targetName || !searchForm.propName) return;
+  if (!searchName.value || !searchProp.value) return;
   if (!isCanParsedUrl.value) return;
   const builder = urlBuilder.value;
   const tempStopFlag = (stopFlag = Date.now());
@@ -192,37 +224,16 @@ const stopDiff = () => {
   stopFlag++;
 };
 onUnmounted(stopDiff);
-interface ExampleItem {
-  title: string;
-  url: string;
-  targetName: string;
-  propName: string;
-}
-const exampleList: ExampleItem[] = [
-  {
-    title: 'IActivityTaskManager#getTasks',
-    url: 'https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/app/IActivityTaskManager.aidl',
-    targetName: 'IActivityTaskManager',
-    propName: 'getTasks',
-  },
-  {
-    title: 'ITaskStackListener#onTaskMovedToFront',
-    url: 'https://github.com/aosp-mirror/platform_frameworks_base/blob/android12-dev/core/java/android/app/ITaskStackListener.aidl',
-    targetName: 'ITaskStackListener',
-    propName: 'onTaskMovedToFront',
-  },
-  {
-    title: 'IUserManager#getUsers',
-    url: 'https://android.googlesource.com/platform/frameworks/base/+/1cdfff555f4a21f71ccc978290e2e212e2f8b168/core/java/android/os/IUserManager.aidl',
-    targetName: 'IUserManager',
-    propName: 'getUsers',
-  },
-];
+
 const handleExample = (item: ExampleItem) => {
   if (handleDiff.loading) return;
-  inputUrl.value = item.url;
-  searchForm.targetName = item.targetName;
-  searchForm.propName = item.propName;
+  if (isRefMode.value) {
+    searchRef.value = item.refName;
+  } else {
+    searchUrl.value = item.url;
+    searchName.value = item.targetName;
+    searchProp.value = item.propName;
+  }
   setTimeout(handleDiff.invoke, 500);
 };
 </script>
@@ -249,7 +260,21 @@ const handleExample = (item: ExampleItem) => {
           </div>
         </div>
       </div>
-      <div v-if="estimateDesc" text-14px>{{ estimateDesc }}</div>
+      <div
+        v-if="0"
+        px-2px
+        cursor-pointer
+        transition-colors
+        rounded-4px
+        hover="color-[rgb(from_currentColor_r_g_b_/_50%)] bg-gray-100"
+        @click="isRefMode = !isRefMode"
+      >
+        {{ mode.toUpperCase() }}
+      </div>
+      <div v-if="estimateDesc" flex items-center gap-4px>
+        <SvgIcon name="database" size-20px />
+        <div text-14px>{{ estimateDesc }}</div>
+      </div>
       <a
         href="https://github.com/lisonge/android-api-diff"
         target="_blank"
@@ -264,8 +289,12 @@ const handleExample = (item: ExampleItem) => {
       <input
         flex="[4]"
         type="text"
-        v-model="inputUrl"
-        placeholder="file url"
+        v-model="actualMainInput"
+        :placeholder="
+          isRefMode
+            ? `Please input Java/AIDL Member Reference`
+            : `Please input Java/AIDL file url`
+        "
         outline-none
         transition-colors
         b-1px
@@ -279,18 +308,19 @@ const handleExample = (item: ExampleItem) => {
         :disabled="handleDiff.loading"
       />
       <div
+        v-if="!isRefMode"
         flex="~ [3]"
         gap-12px
         items-center
         :class="{
-          'op-50': !isCanParsedUrl,
+          'op-75': !isCanParsedUrl,
         }"
       >
         <input
           flex="[1]"
           max-w-320px
           type="text"
-          v-model="searchForm.targetName"
+          v-model="searchName"
           placeholder="interface or class name"
           outline-none
           transition-colors
@@ -306,8 +336,8 @@ const handleExample = (item: ExampleItem) => {
         <input
           flex="[1]"
           type="text"
-          v-model="searchForm.propName"
-          placeholder="method or prop name of interface or class"
+          v-model="searchProp"
+          placeholder="method or prop name"
           outline-none
           transition-colors
           b-1px
@@ -319,22 +349,22 @@ const handleExample = (item: ExampleItem) => {
           py-4px
           text-dark-100
         />
-        <div
-          @click="handleDiff.loading ? stopDiff() : handleDiff.invoke()"
-          px-12px
-          bg-blue-100
-          rounded-xs
-          flex
-          items-center
-          gap-4px
-          cursor-pointer
-          :class="{
-            'cursor-not-allowed!': !isCanParsedUrl,
-          }"
-        >
-          <SvgIcon name="loading" size-16px v-if="handleDiff.loading" />
-          <div>{{ handleDiff.loading ? `stop` : `diff` }}</div>
-        </div>
+      </div>
+      <div
+        @click="handleDiff.loading ? stopDiff() : handleDiff.invoke()"
+        px-12px
+        bg-blue-100
+        rounded-xs
+        flex
+        items-center
+        gap-4px
+        cursor-pointer
+        :class="{
+          'cursor-not-allowed!': !isCanParsedUrl,
+        }"
+      >
+        <SvgIcon name="loading" size-16px v-if="handleDiff.loading" />
+        <div>{{ handleDiff.loading ? `STOP` : `DIFF` }}</div>
       </div>
     </div>
     <div v-if="diffTypeReult.length" flex flex-wrap gap-row-4px gap-col-24px>

@@ -11,6 +11,7 @@ const sourceRegs = [
 const csBaseUrl = 'https://cs.android.com/';
 // https://cs.android.com/android/platform/superproject/+/android-latest-release:Android.bp
 // https://cs.android.com/android/platform/superproject/+/android-latest-release:frameworks/base/Android.bp
+// https://cs.android.com/android/platform/superproject/main/+/main:bootable/
 const csReg = /\/\+\/[^\/\:]+\:?(.*)$/g;
 
 const mirrorBaseUrl =
@@ -37,7 +38,7 @@ const mirrorContentRegs = [
   /\/aosp\-mirror\/platform_frameworks_base\/[^\/]+(.*)$/g,
 ];
 
-const fixFilePath = (filePath: string): string => {
+export const fixFilePath = (filePath: string): string => {
   const a1 = filePath.indexOf(';');
   if (a1 >= 0) {
     filePath = filePath.substring(0, a1);
@@ -77,6 +78,7 @@ export const getVersionUrlBuilder = (
       filePath: fixFilePath(filePath),
     };
   } else if (url.startsWith(csBaseUrl)) {
+    url = url.replace('/main/+/', '/+/');
     csReg.lastIndex = 0;
     const r = csReg.exec(url);
     if (!r) return;
