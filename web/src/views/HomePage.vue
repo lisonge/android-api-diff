@@ -306,6 +306,7 @@ const handleExample = (item: ExampleItem) => {
         py-4px
         text-dark-100
         :disabled="handleDiff.loading"
+        @keyup.enter="handleDiff.invoke()"
       />
       <div
         v-if="!isRefMode"
@@ -332,6 +333,7 @@ const handleExample = (item: ExampleItem) => {
           px-8px
           py-4px
           text-dark-100
+          @keyup.enter="handleDiff.invoke()"
         />
         <input
           flex="[1]"
@@ -348,6 +350,7 @@ const handleExample = (item: ExampleItem) => {
           px-8px
           py-4px
           text-dark-100
+          @keyup.enter="handleDiff.invoke()"
         />
       </div>
       <div
