@@ -99,6 +99,8 @@ setTimeout(async () => {
 // IActivityManager.
 // android.app.IActivityManager
 
+const aidlFileNameRegs = [/^I[A-Z].*/g, /\.I[A-Z].*/g];
+
 export const searchFilePathByName = (name: string): string | undefined => {
   name = fixFilePath(name.trim());
   if (!name) return;
@@ -106,7 +108,7 @@ export const searchFilePathByName = (name: string): string | undefined => {
     const a = `/${name}`;
     return aidlJavaFiles.value.find((v) => v.endsWith(a));
   }
-  const perfAidl = name.startsWith('I') || name.includes('.I');
+  const perfAidl = aidlFileNameRegs.some((reg) => name.match(reg));
   name = name.replaceAll('.', '/');
   let a = '';
   if (perfAidl) {
