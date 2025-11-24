@@ -130,6 +130,8 @@ export const searchFilePathByRefName = (
   name = name.trim();
   if (!name) return;
   const [clazzName, tempProp = ''] = name.split('#', 2);
+  const targetProp = getBeforeString(tempProp, '(');
+  if (!targetProp) return;
   let filePath: string | undefined;
   let targetName = '';
   for (const mayName of getMayClassNames(clazzName)) {
@@ -138,7 +140,6 @@ export const searchFilePathByRefName = (
     if (filePath) break;
   }
   if (!filePath) return;
-  const targetProp = getBeforeString(tempProp, '(');
   return {
     targetUrl:
       `https://cs.android.com/android/platform/superproject/+/android-latest-release:frameworks/base/` +
