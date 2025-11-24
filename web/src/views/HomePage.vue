@@ -20,7 +20,7 @@ import { useRouter } from 'vue-router';
 const title = useTitle();
 const androidOrderTags = androidVersionList.flatMap((v) => v.tags);
 
-const mode = useLocalStorage<'file' | 'ref'>('mode', 'file');
+const mode = useLocalStorage<'file' | 'ref'>('mode', 'ref');
 const isRefMode = computed({
   get: () => mode.value === 'ref',
   set: (v: boolean) => {
