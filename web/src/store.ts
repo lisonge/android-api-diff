@@ -151,8 +151,12 @@ export const searchFilePathByRefName = (
   };
 };
 // android.content.pm.IPackageManager.A -> [android.content.pm.IPackageManager.A, android.content.pm.IPackageManager]
+// android.content.pm.PackageInfoHidden -> [android.content.pm.PackageInfoHidden, android.content.pm.PackageInfo]
 const getMayClassNames = (name: string): string[] => {
   const r = new Set<string>([name]);
+  if (name.endsWith('Hidden')) {
+    r.add(name.substring(0, name.length - 'Hidden'.length));
+  }
   const parts = name.split('.');
   for (let i = parts.length - 1; i > 0; i--) {
     const lastPart = parts[i];
