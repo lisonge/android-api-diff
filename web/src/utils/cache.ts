@@ -1,5 +1,5 @@
 import { updateStorageEstimate } from '@/store';
-import { type ClassStruct } from '@ikun/syntax';
+import type { ClassStruct } from '@ikun/syntax';
 import lf from 'localforage';
 
 const encoder = new TextEncoder();

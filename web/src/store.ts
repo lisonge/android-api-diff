@@ -3,13 +3,12 @@ import {
   getOrSetStructCache,
   persistentFetch,
 } from '@/utils/cache';
-import {
-  getAIDLStructList,
-  getJavaStructList,
-  type ClassStruct,
-} from '@ikun/syntax';
+import type { ClassStruct } from '@ikun/syntax';
 import { computed, shallowReactive, shallowRef } from 'vue';
 import { fixFilePath, mirrorContentBaseUrl } from './utils/url';
+
+const syntaxMod = () => import('@ikun/syntax');
+setTimeout(syntaxMod, 3000);
 
 export const fileStructsMap = shallowReactive<Record<string, ClassStruct[]>>(
   {},
@@ -25,9 +24,9 @@ export const pullStructsByUrl = async (
     let list: ClassStruct[] = [];
     if (text.startsWith('404:')) {
     } else if (url.endsWith('.aidl')) {
-      list = getAIDLStructList(text);
+      list = (await syntaxMod()).getAIDLStructList(text);
     } else if (url.endsWith('.java')) {
-      list = getJavaStructList(text);
+      list = (await syntaxMod()).getJavaStructList(text);
     } else {
       // unsupported file type
     }

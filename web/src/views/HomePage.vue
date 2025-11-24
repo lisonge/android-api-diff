@@ -10,7 +10,7 @@ import {
 import { colors, useTask } from '@/utils';
 import { emptyArray } from '@/utils/constant';
 import { getVersionUrlBuilder } from '@/utils/url';
-import { type ClassStruct } from '@ikun/syntax';
+import type { ClassStruct } from '@ikun/syntax';
 import { refDebounced } from '@vueuse/core';
 import pLimit from 'p-limit';
 import { computed, onScopeDispose, onUnmounted, watch } from 'vue';
