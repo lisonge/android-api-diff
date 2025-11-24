@@ -4,11 +4,10 @@ import {
   persistentFetch,
 } from '@/utils/cache';
 import type { ClassStruct } from '@ikun/syntax';
-import { computed, shallowReactive, shallowRef } from 'vue';
-import { fixFilePath, mirrorContentBaseUrl } from './utils/url';
 import pLimit from 'p-limit';
-import { getBeforeString } from './utils';
+import { computed, shallowReactive, shallowRef } from 'vue';
 import { emptyArray } from './utils/constant';
+import { fixFilePath, mirrorContentBaseUrl } from './utils/url';
 
 const syntaxMod = () => import('@ikun/syntax');
 setTimeout(syntaxMod, 3000);
@@ -129,13 +128,14 @@ export const searchFilePathByName = (name: string): string | undefined => {
 // com.android.internal.app.IAppOpsService#setMode
 // android.content.pm.IPackageManager#getInstalledPackages(int, int)
 const clazzSeparator = /[#\:]+/;
+const propReg = /^[_0-9a-zA-Z]+/g;
 export const searchFilePathByRefName = (
   name: string,
 ): SearchFromData | undefined => {
   name = name.trim();
   if (!name) return;
   const [clazzName, tempProp = ''] = name.split(clazzSeparator, 2);
-  const targetProp = getBeforeString(tempProp, '(');
+  const targetProp = tempProp.match(propReg)?.[0];
   if (!targetProp) return;
   let filePath: string | undefined;
   let targetName = '';

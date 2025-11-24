@@ -105,12 +105,6 @@ export const findStructByName = (
   }
 };
 
-export const getBeforeString = (str: string, sub: string): string => {
-  const index = str.indexOf(sub);
-  if (index < 0) return str;
-  return str.substring(0, index);
-};
-
 import { isEqual } from 'lodash-es';
 
 export const useEqualComputed = <T>(fn: () => T): ComputedRef<T> => {
