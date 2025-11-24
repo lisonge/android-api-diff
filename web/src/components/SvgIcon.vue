@@ -7,18 +7,16 @@ const modules: Record<string, { default: string }> = import.meta.glob(
   },
 );
 
-const svgElMap = (() => {
-  return Object.fromEntries(
-    Object.entries(modules).map(([k, v]) => {
-      const svgName = k.split('/').at(-1)!.split('.')[0];
-      const t = document.createElement('template');
-      t.innerHTML = v.default;
-      return [svgName, t.content.firstChild as SVGSymbolElement | null];
-    }),
-  );
-})();
+const svgElMap = Object.fromEntries(
+  Object.entries(modules).map(([k, v]) => {
+    const svgName = k.split('/').at(-1)!.split('.')[0];
+    const t = document.createElement('template');
+    t.innerHTML = v.default;
+    return [svgName, t.content.firstChild as SVGSymbolElement | null];
+  }),
+);
 </script>
-<script setup vapor lang="ts">
+<script setup lang="ts">
 import { computed, shallowRef, watchEffect } from 'vue';
 
 const props = withDefaults(
@@ -31,10 +29,11 @@ const props = withDefaults(
 const svgEl = computed(() => svgElMap[props.name]);
 const actualEl = shallowRef<SVGSVGElement>();
 watchEffect(() => {
-  const s = svgEl.value;
-  const a = actualEl.value;
-  if (!s || !a) return;
-  a.replaceChildren(...s.cloneNode(true).childNodes);
+  if (!actualEl.value) return;
+  if (!svgEl.value) return;
+  actualEl.value.replaceChildren(
+    ...Array.from(svgEl.value.cloneNode(true).childNodes),
+  );
 });
 </script>
 <template>
