@@ -358,8 +358,15 @@ const handleExample = (item: ExampleItem) => {
         items-center
       >
         <div size-16px :style="{ background: item.typeColor }"></div>
-        <div text-16px font-500 bg-red-100 px-4px rounded-4px whitespace-pre>
-          {{ item.typeDesc || 'none' }}
+        <div
+          v-if="item.typeDesc"
+          font-500
+          bg-gray-200
+          px-4px
+          rounded-4px
+          whitespace-pre
+        >
+          {{ item.typeDesc }}
         </div>
         <div flex gap-8px flex-wrap>
           <div
