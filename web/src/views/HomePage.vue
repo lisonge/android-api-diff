@@ -261,6 +261,7 @@ const handleExample = (item: ExampleItem) => {
           transition-colors
           rounded-4px
           hover="color-[rgb(from_currentColor_r_g_b_/_50%)] bg-gray-100"
+          active="bg-gray-200"
           @click="switchRefMode"
         />
       </div>
@@ -334,13 +335,17 @@ const handleExample = (item: ExampleItem) => {
       <div
         @click="handleDiff.loading ? stopDiff() : handleDiff.invoke()"
         px-12px
-        bg-blue-100
         rounded-xs
         flex
         items-center
         gap-4px
         text-16px
         cursor-pointer
+        bg-blue-100
+        hover="bg-blue-200"
+        active="bg-blue-300"
+        transition-colors
+        select-none
         :class="{
           'cursor-not-allowed!': !isCanParsedUrl,
         }"
@@ -411,6 +416,7 @@ const handleExample = (item: ExampleItem) => {
               v-if="urlBuilder"
               :href="getTemplateUrlUrl(tag)"
               target="_blank"
+              transition-colors
               hover="color-[rgb(from_currentColor_r_g_b_/_50%)]"
               whitespace-nowrap
             >
