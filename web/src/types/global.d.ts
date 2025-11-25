@@ -22,6 +22,7 @@ interface DiffResultItem {
   interfaces: ClassStruct[];
   typeDesc: string;
   typeColor: string;
+  notFound: boolean;
 }
 
 interface DiffTypeItem {

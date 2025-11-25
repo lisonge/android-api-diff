@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import SvgIcon from '@/components/SvgIcon.vue';
+import TagCard from '@/components/TagCard.vue';
 import {
   aidlJavaFiles,
   estimateDesc,
   exampleList,
   fileStructsMap,
+  notFoundFileMap,
   pullStructsByUrl,
   searchFilePathByRefName,
 } from '@/store';
@@ -12,12 +14,7 @@ import { colors, findStructByName, useEqualComputed, useTask } from '@/utils';
 import androidVersionList from '@/utils/android.data';
 import { emptyArray } from '@/utils/constant';
 import { getVersionUrlBuilder } from '@/utils/url';
-import {
-  useLocalStorage,
-  useTitle,
-  watchDebounced,
-  watchImmediate,
-} from '@vueuse/core';
+import { useLocalStorage, useTitle, watchDebounced } from '@vueuse/core';
 import { useRouteQuery } from '@vueuse/router';
 import { computed, onUnmounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -133,6 +130,7 @@ const diffResultList = computed<DiffResultItem[]>(() => {
   if (!targetName || !propName || !isCanParsedUrl.value) return emptyArray;
   return androidOrderTags
     .map((tag) => {
+      const filePath = tag + builder.filePath;
       const structs = fileStructsMap[tag + builder.filePath];
       if (!structs) return;
       let typeDesc = '';
@@ -146,12 +144,14 @@ const diffResultList = computed<DiffResultItem[]>(() => {
             .join('\n');
         }
       }
-      return {
+      const r: DiffResultItem = {
         tag,
         interfaces: structs,
         typeDesc,
         typeColor: getCachedTypeColor(typeDesc),
+        notFound: notFoundFileMap[filePath],
       };
+      return r;
     })
     .filter((v): v is DiffResultItem => !!v);
 });
@@ -414,27 +414,14 @@ const handleExample = (item: ExampleItem) => {
           <div>{{ item.alias }}</div>
         </div>
         <div flex flex-col gap-4px>
-          <div v-for="tag in item.tags" :key="tag" flex gap-4px items-center>
-            <div
-              size-12px
-              transition-colors
-              :title="getDiffResult(tag)?.typeDesc"
-              :style="{
-                background: getDiffResult(tag)?.typeColor,
-              }"
-            ></div>
-            <a
-              v-if="urlBuilder"
-              :href="getTemplateUrlUrl(tag)"
-              target="_blank"
-              transition-colors
-              hover="color-[rgb(from_currentColor_r_g_b_/_50%)]"
-              whitespace-nowrap
-            >
-              {{ tag }}
-            </a>
-            <a v-else whitespace-nowrap>{{ tag }}</a>
-          </div>
+          <TagCard
+            v-for="tag in item.tags"
+            :key="tag"
+            :getTemplateUrlUrl="getTemplateUrlUrl"
+            :tag="tag"
+            :diffResult="getDiffResult(tag)"
+            :urlBuilder="urlBuilder"
+          />
         </div>
       </div>
     </div>

@@ -102,3 +102,9 @@ export const getOrSetStructCache = async (
   }
   return value;
 };
+
+export const check404File = async (filePath: string): Promise<boolean> => {
+  const key = await sha256Hash(filePath);
+  const value = await persistentCache.getItem<string>(key);
+  return !!value && value.startsWith('404:');
+};

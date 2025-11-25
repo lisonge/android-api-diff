@@ -1,4 +1,5 @@
 import {
+  check404File,
   expiredFetch,
   getOrSetStructCache,
   persistentFetch,
@@ -16,6 +17,8 @@ export const fileStructsMap = shallowReactive<Record<string, ClassStruct[]>>(
   {},
 );
 
+export const notFoundFileMap = shallowReactive<Record<string, boolean>>({});
+
 const limit = pLimit(5);
 export const pullStructsByUrl = async (
   filePath: string,
@@ -23,8 +26,8 @@ export const pullStructsByUrl = async (
 ): Promise<ClassStruct[]> => {
   const temp = fileStructsMap[filePath];
   if (temp) return temp;
+  const url = mirrorContentBaseUrl + filePath;
   const list = await getOrSetStructCache(filePath, async () => {
-    const url = mirrorContentBaseUrl + filePath;
     const text = await limit(() => {
       if (signal.signal.aborted) {
         throw new Error('aborted');
@@ -43,6 +46,12 @@ export const pullStructsByUrl = async (
     return list;
   }).catch(() => {});
   if (!list) return emptyArray;
+  if (list.length === 0) {
+    const is404 = await check404File(url);
+    if (is404) {
+      notFoundFileMap[filePath] = is404;
+    }
+  }
   fileStructsMap[filePath] = list;
   return list;
 };
