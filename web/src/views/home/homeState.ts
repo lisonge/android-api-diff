@@ -163,7 +163,7 @@ export const useSharedHomeState = createSharedComposable(() => {
     return diffResultList.value.find((v) => v.tag === tag);
   };
 
-  const diffTypeReult = computed<DiffTypeItem[]>(() => {
+  const diffTypeReult = useEqualComputed<DiffTypeItem[]>(() => {
     const list: DiffTypeItem[] = [];
     androidOrderTags.forEach((tag, index) => {
       const res = getDiffResult(tag);

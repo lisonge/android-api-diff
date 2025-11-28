@@ -5,11 +5,11 @@ import androidVersionList from '@/utils/android.data';
 import TagCard from '@/views/home/TagCard.vue';
 import { useTitle } from '@vueuse/core';
 import { useSharedHomeState } from './homeState';
+import DiffResultList from './DiffResultList.vue';
 
 const title = useTitle();
 const {
   actualMainInput,
-  diffTypeReult,
   handleDiff,
   handleExample,
   isCanParsedUrl,
@@ -22,8 +22,8 @@ const {
 } = useSharedHomeState();
 </script>
 <template>
-  <div p-12px text-14px flex flex-col gap-8px>
-    <div flex items-center gap-24px>
+  <div p-12px text-14px flex flex-col class="[--gap:8px]">
+    <div mb="--gap" flex items-center gap-24px>
       <div text-20px font-400>{{ title }}</div>
       <div flex-1 flex items-center gap-8px>
         <div font-500>Example</div>
@@ -58,7 +58,7 @@ const {
         <SvgIcon name="github" size-20px />
       </a>
     </div>
-    <div flex gap-24px items-center>
+    <div mb="--gap" flex gap-24px items-center>
       <div title="switch search mode">
         <SvgIcon
           name="exchange"
@@ -160,41 +160,8 @@ const {
         <div>{{ handleDiff.loading ? `STOP` : `DIFF` }}</div>
       </div>
     </div>
-    <div v-if="diffTypeReult.length" flex flex-wrap gap-row-4px gap-col-24px>
-      <div
-        v-for="item in diffTypeReult"
-        :key="item.typeDesc"
-        flex
-        gap-8px
-        items-center
-      >
-        <div size-16px :style="{ background: item.typeColor }"></div>
-        <div
-          v-if="item.typeDesc"
-          font-500
-          bg-gray-200
-          px-4px
-          rounded-4px
-          whitespace-pre
-        >
-          {{ item.typeDesc }}
-        </div>
-        <div flex gap-8px flex-wrap>
-          <div
-            v-for="range in item.tagRanges"
-            :key="range[0]"
-            px-4px
-            bg-gray-100
-            rounded-4px
-          >
-            {{
-              range.length > 1 ? [range[0], range.at(-1)].join(' - ') : range[0]
-            }}
-          </div>
-        </div>
-      </div>
-    </div>
-    <div flex gap-16px overflow-scroll hidden-scrollbar>
+    <DiffResultList />
+    <div mb="--gap" flex gap-16px overflow-scroll hidden-scrollbar>
       <div
         v-for="item in androidVersionList"
         :key="item.version"
@@ -203,7 +170,12 @@ const {
         flex-col
         items-center
       >
-        <div h-2px w-full flex>
+        <div
+          h-2px
+          w-full
+          flex
+          :class="{ 'bg-cyan-200': !androidVersionColors[item.version].length }"
+        >
           <div
             v-for="bg in androidVersionColors[item.version]"
             :key="bg"
