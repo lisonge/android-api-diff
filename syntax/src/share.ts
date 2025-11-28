@@ -1,6 +1,7 @@
 export interface ClassMember {
   name: string;
   type: string;
+  loc: number;
   parameterCount?: number;
 }
 

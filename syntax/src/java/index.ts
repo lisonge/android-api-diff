@@ -51,9 +51,11 @@ export const getJavaStructList = (text: string): ClassStruct[] => {
     const returnType = ctx.typeTypeOrVoid().getText();
     const paramTypeList = getParamTypeList(ctx.formalParameters().children);
     const type = `(${paramTypeList.join(', ')}) -> ${returnType}`;
+    ctx.start.line;
     addMember({
       name,
       type,
+      loc: ctx.start.line,
       parameterCount: paramTypeList.length,
     });
   };
@@ -68,6 +70,7 @@ export const getJavaStructList = (text: string): ClassStruct[] => {
     addMember({
       name,
       type,
+      loc: ctx.start.line,
     });
   };
   listener.enterInterfaceDeclaration = (ctx) => {
@@ -83,6 +86,7 @@ export const getJavaStructList = (text: string): ClassStruct[] => {
     addMember({
       name,
       type,
+      loc: ctx.start.line,
       parameterCount: paramTypeList.length,
     });
   };
@@ -92,6 +96,7 @@ export const getJavaStructList = (text: string): ClassStruct[] => {
     addMember({
       name,
       type,
+      loc: ctx.start.line,
     });
   };
   ParseTreeWalker.DEFAULT.walk(listener, result);

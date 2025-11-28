@@ -3,7 +3,7 @@ import { createWebHistory, createRouter } from 'vue-router';
 export default createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', component: () => import('./views/HomePage.vue') },
+    { path: '/', component: () => import('./views/home/HomePage.vue') },
     {
       path: '/i/:ref',
       redirect(to) {

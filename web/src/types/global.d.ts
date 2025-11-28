@@ -19,7 +19,8 @@ interface ExampleItem {
 
 interface DiffResultItem {
   tag: string;
-  interfaces: ClassStruct[];
+  structs: import('@ikun/syntax').ClassStruct[];
+  members: import('@ikun/syntax').ClassMember[] | undefined;
   typeDesc: string;
   typeColor: string;
   notFound: boolean;

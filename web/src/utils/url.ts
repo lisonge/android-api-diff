@@ -57,6 +57,7 @@ export const fixFilePath = (filePath: string): string => {
 export const getVersionUrlBuilder = (
   url: string,
 ): VersionUrlBuilder | undefined => {
+  url = fixFilePath(url.trim());
   if (url.startsWith(sourceBaseurl)) {
     const repository = url.substring(sourceBaseurl.length, url.indexOf('/+/'));
     if (!repository) {
@@ -72,7 +73,7 @@ export const getVersionUrlBuilder = (
     })();
     if (filePath === undefined) return;
     return {
-      filePath: fixFilePath(filePath),
+      filePath,
       templateUrl: [sourceBaseurl + repository + `/+/`, filePath],
     };
   } else if (url.startsWith(csBaseUrl)) {
@@ -88,7 +89,7 @@ export const getVersionUrlBuilder = (
       actualFilePath = '/' + actualFilePath;
     }
     return {
-      filePath: fixFilePath(actualFilePath),
+      filePath: actualFilePath,
       templateUrl: [baseUrl + `/+/`, filePath && ':' + filePath],
     };
   } else if (url.startsWith(mirrorBaseUrl)) {
@@ -105,7 +106,7 @@ export const getVersionUrlBuilder = (
       .substring(mirrorBaseUrl.length, url.indexOf(filePath))
       .split('/')[0];
     return {
-      filePath: fixFilePath(filePath),
+      filePath,
       templateUrl: [mirrorBaseUrl + type + `/`, filePath],
     };
   } else if (url.startsWith(mirrorContentBaseUrl)) {
@@ -119,8 +120,21 @@ export const getVersionUrlBuilder = (
     })();
     if (filePath === undefined) return;
     return {
-      filePath: fixFilePath(filePath),
+      filePath,
       templateUrl: [mirrorContentBaseUrl, filePath],
     };
   }
+};
+
+export const getSourceUrlWithLine = (u: string, line: number): string => {
+  if (u.startsWith(csBaseUrl)) {
+    return `${u};l=${line}`;
+  }
+  if (u.startsWith(mirrorBaseUrl)) {
+    return `${u}#L${line}`;
+  }
+  if (u.startsWith(sourceBaseurl)) {
+    return `${u}#${line}`;
+  }
+  return u;
 };

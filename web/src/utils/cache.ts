@@ -43,51 +43,7 @@ export const persistentFetch = async (
   });
 };
 
-const expiredCache = lf.createInstance({ name: 'expiredCache', version: 2 });
-const getExpiredCache = async (
-  key: string,
-  expires: number,
-  fallback: () => Promise<string>,
-) => {
-  interface ExpiredItem {
-    data: string;
-    mtime: number;
-  }
-  let value = await expiredCache.getItem<ExpiredItem>(key);
-  if (value) {
-    const now = Date.now();
-    if (now - value.mtime > expires) {
-      await expiredCache.removeItem(key);
-      value = null;
-    }
-  }
-  if (!value) {
-    const data = await fallback();
-    value = {
-      data,
-      mtime: Date.now(),
-    };
-    await expiredCache.setItem(key, value);
-    updateStorageEstimate();
-  }
-  return value.data;
-};
-
-export const expiredFetch = async (
-  url: string,
-  cacheKeyBuilder?: UrlCacheKeyBuilder,
-): Promise<string> => {
-  const key = await sha256Hash(cacheKeyBuilder?.(url) ?? url);
-  return getExpiredCache(key, 24 * 3600 * 1000, async () => {
-    const r = await fetch(url);
-    if (!r.ok) {
-      throw new Error(`Failed to fetch ${url}: ${r.status} ${r.statusText}`);
-    }
-    return r.text();
-  });
-};
-
-const structCache = lf.createInstance({ name: 'structCache' });
+const structCache = lf.createInstance({ name: 'structCacheV2' });
 
 export const getOrSetStructCache = async (
   filePath: string,
@@ -108,3 +64,6 @@ export const check404File = async (filePath: string): Promise<boolean> => {
   const value = await persistentCache.getItem<string>(key);
   return !!value && value.startsWith('404:');
 };
+
+// delete unused databases
+['expiredCache', 'structCache'].forEach((v) => indexedDB.deleteDatabase(v));

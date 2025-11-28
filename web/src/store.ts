@@ -1,6 +1,5 @@
 import {
   check404File,
-  expiredFetch,
   getOrSetStructCache,
   persistentFetch,
 } from '@/utils/cache';
@@ -96,7 +95,7 @@ export const exampleList: ExampleItem[] = [
 
 export const aidlJavaFiles = shallowRef<string[]>([]);
 setTimeout(async () => {
-  const text = await expiredFetch(
+  const text = await persistentFetch(
     'https://raw.githubusercontent.com/android-cs/16/refs/heads/main/aidl_java_files.txt',
   );
   aidlJavaFiles.value = text.split('\n');

@@ -32,6 +32,7 @@ export const getAIDLStructList = (text: string): ClassStruct[] => {
     addMember({
       name,
       type,
+      loc: ctx.start.line,
     });
   };
   listener.enterConstantDeclaration = (ctx) => {
@@ -40,6 +41,7 @@ export const getAIDLStructList = (text: string): ClassStruct[] => {
     addMember({
       name,
       type,
+      loc: ctx.start.line,
     });
   };
   ParseTreeWalker.DEFAULT.walk(listener, result);
