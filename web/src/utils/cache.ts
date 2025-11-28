@@ -43,7 +43,7 @@ export const persistentFetch = async (
   });
 };
 
-const structCache = lf.createInstance({ name: 'structCacheV2' });
+const structCache = lf.createInstance({ name: 'structCacheV3' });
 
 export const getOrSetStructCache = async (
   filePath: string,
@@ -66,4 +66,6 @@ export const check404File = async (filePath: string): Promise<boolean> => {
 };
 
 // delete unused databases
-['expiredCache', 'structCache'].forEach((v) => indexedDB.deleteDatabase(v));
+['expiredCache', 'structCache', 'structCacheV2'].forEach((v) =>
+  indexedDB.deleteDatabase(v),
+);

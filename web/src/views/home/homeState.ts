@@ -112,7 +112,7 @@ export const useSharedHomeState = createSharedComposable(() => {
   const colorCache = new Map<string, string>();
   watch(searchFromData, () => colorCache.clear());
   const getCachedTypeColor = (key: string) => {
-    if (!key) return '#000';
+    if (!key) return '';
     const v = colorCache.get(key);
     if (v) return v;
     let i = colorCache.size;
@@ -133,15 +133,18 @@ export const useSharedHomeState = createSharedComposable(() => {
         const structs = fileStructsMap[tag + builder.filePath];
         if (!structs) return;
         let typeDesc = '';
+        let typeColor = '#00000080'; // not found file
         const target = findStructByName(structs, targetName);
         let members: DiffResultItem['members'] | undefined;
         if (target) {
+          typeColor = '#000'; // not found prop
           members = target.members.filter((v) => v.name === propName);
           if (members.length > 0) {
             typeDesc = members
               .sort((a, b) => (a.parameterCount ?? 0) - (b.parameterCount ?? 0))
               .map((v) => v.type)
               .join('\n');
+            typeColor = getCachedTypeColor(typeDesc);
           }
         }
         const r: DiffResultItem = {
@@ -149,7 +152,7 @@ export const useSharedHomeState = createSharedComposable(() => {
           structs,
           members,
           typeDesc,
-          typeColor: getCachedTypeColor(typeDesc),
+          typeColor,
           notFound: notFoundFileMap[filePath],
         };
         return r;
@@ -226,6 +229,23 @@ export const useSharedHomeState = createSharedComposable(() => {
     }
     setTimeout(handleDiff.invoke, 300);
   };
+
+  const androidVersionColors = useEqualComputed<Record<string, string[]>>(
+    () => {
+      const map: Record<string, string[]> = {};
+      androidVersionList.forEach((v) => {
+        map[v.version] = Array.from(
+          new Set(
+            diffResultList.value
+              .filter((d) => v.tags.includes(d.tag))
+              .map((d) => d.typeColor),
+          ),
+        );
+      });
+      return map;
+    },
+  );
+
   return {
     isRefMode,
     actualMainInput,
@@ -242,5 +262,6 @@ export const useSharedHomeState = createSharedComposable(() => {
     stopDiff,
     getDiffResult,
     urlBuilder,
+    androidVersionColors,
   };
 });

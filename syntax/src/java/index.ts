@@ -46,6 +46,17 @@ export const getJavaStructList = (text: string): ClassStruct[] => {
     enterStruct(ctx.identifier().getText());
   };
   listener.exitClassDeclaration = exitStruct;
+  listener.enterConstructorDeclaration = (ctx) => {
+    const name = ctx.identifier().getText();
+    const paramTypeList = getParamTypeList(ctx.formalParameters().children);
+    const type = `(${paramTypeList.join(', ')}) -> ` + name;
+    addMember({
+      name,
+      type,
+      loc: ctx.start.line,
+      parameterCount: paramTypeList.length,
+    });
+  };
   listener.enterMethodDeclaration = (ctx) => {
     const name = ctx.identifier().getText();
     const returnType = ctx.typeTypeOrVoid().getText();

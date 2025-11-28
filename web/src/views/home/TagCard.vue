@@ -17,12 +17,6 @@ const title = computed<string | undefined>(() => {
   if (d.notFound) return `Not Found File`;
   return 'No Found Prop';
 });
-const background = computed<string | undefined>(() => {
-  const d = diffResult.value;
-  if (!d) return;
-  if (d.notFound) return '#00000080';
-  return d.typeColor;
-});
 const notFound = computed(() => diffResult.value?.notFound);
 const sourceUrl = computed<string | undefined>(() => {
   const t = urlBuilder.value?.templateUrl;
@@ -42,7 +36,7 @@ const sourceUrl = computed<string | undefined>(() => {
       transition-colors
       :title="title"
       :style="{
-        background: background,
+        background: diffResult?.typeColor,
       }"
     ></div>
     <a
@@ -59,8 +53,8 @@ const sourceUrl = computed<string | undefined>(() => {
       v-else
       whitespace-nowrap
       transition-colors
-      :class="{
-        'color-[#00000080]': notFound,
+      :style="{
+        color: diffResult?.typeColor,
       }"
     >
       {{ tag }}

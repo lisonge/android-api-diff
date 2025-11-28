@@ -18,6 +18,7 @@ const {
   searchName,
   searchProp,
   stopDiff,
+  androidVersionColors,
 } = useSharedHomeState();
 </script>
 <template>
@@ -202,7 +203,17 @@ const {
         flex-col
         items-center
       >
-        <div h-2px bg-red-200 w-full></div>
+        <div h-2px w-full flex>
+          <div
+            v-for="bg in androidVersionColors[item.version]"
+            :key="bg"
+            h-full
+            flex-1
+            :style="{
+              background: bg,
+            }"
+          ></div>
+        </div>
         <div text-12px font-600 flex justify-center gap-4px>
           <div>{{ item.version }}</div>
           <div>{{ item.alias }}</div>

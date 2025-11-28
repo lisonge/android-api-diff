@@ -25,7 +25,6 @@ for (const name of urls) {
 
 // const result = getJavaStructList(`
 // public final class Example {
-//     private static final String TAG = "MotionEvent";
-//     private int value = 0;
+//     Example(){}
 // }`);
 // console.log(JSON.stringify(result, null, 2));
