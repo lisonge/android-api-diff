@@ -2,6 +2,7 @@ interface AndroidVersionItem {
   version: string;
   alias: string;
   tags: string[];
+  futureTags: string[];
 }
 
 interface VersionUrlBuilder {

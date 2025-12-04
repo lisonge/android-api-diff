@@ -10,10 +10,13 @@ async function sha256Hash(str: string): Promise<string> {
     .toBase64({ alphabet: 'base64url', omitPadding: true });
 }
 
-const persistentCache = lf.createInstance({
-  name: 'persistentCache',
-  version: 2,
-});
+const dbNames: string[] = [];
+const createDB = (name: string) => {
+  dbNames.push(name);
+  return lf.createInstance({ name });
+};
+
+const persistentCache = createDB('persistentCacheV2');
 
 const getPersistentCache = async (
   key: string,
@@ -43,7 +46,7 @@ export const persistentFetch = async (
   });
 };
 
-const structCache = lf.createInstance({ name: 'structCacheV3' });
+const structCache = createDB('structCacheV4');
 
 export const getOrSetStructCache = async (
   filePath: string,
@@ -66,6 +69,10 @@ export const check404File = async (filePath: string): Promise<boolean> => {
 };
 
 // delete unused databases
-['expiredCache', 'structCache', 'structCacheV2'].forEach((v) =>
-  indexedDB.deleteDatabase(v),
-);
+indexedDB.databases().then((dbs) => {
+  dbs.forEach((db) => {
+    if (!dbNames.includes(db.name!)) {
+      indexedDB.deleteDatabase(db.name!);
+    }
+  });
+});

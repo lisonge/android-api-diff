@@ -192,6 +192,12 @@ const {
         </div>
         <div flex flex-col gap-4px>
           <TagCard v-for="tag in item.tags" :key="tag" :tag="tag" />
+          <TagCard
+            v-for="tag in item.futureTags"
+            :key="tag"
+            :tag="tag"
+            future
+          />
         </div>
       </div>
     </div>
