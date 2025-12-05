@@ -1,5 +1,6 @@
 {
   "name": "android-api-diff",
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "pnpm -F web exec vite",
