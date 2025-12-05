@@ -1,3 +1,5 @@
+import process from 'node:process';
+
 const androidAliasMap: Record<string, string> = {
   '8': 'O',
   '8.1': 'O_MR1',
@@ -22,15 +24,23 @@ const googleTags = await fetch(
     Object.keys(JSON.parse(r.substring(4))).filter((v) => tagReg.test(v)),
   );
 
+// use GITHUB_TOKEN to avoid API rate limit exceeded
 const githubTags = await fetch(
   'https://api.github.com/repos/aosp-mirror/platform_frameworks_base/git/refs/tags',
+  {
+    headers: process.env.GITHUB_TOKEN
+      ? {
+          Authorization: `token ${process.env.GITHUB_TOKEN}`,
+        }
+      : undefined,
+  },
 )
   .then<{ ref: string }[]>((r) => r.json())
-  .then((r) =>
-    r
+  .then((r) => {
+    return r
       .map((v) => v.ref.substring('refs/tags/'.length))
-      .filter((v) => tagReg.test(v)),
-  );
+      .filter((v) => tagReg.test(v));
+  });
 
 const versionTags: Record<string, string[]> = {};
 googleTags.forEach((v) => {

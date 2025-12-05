@@ -24,10 +24,14 @@ export default defineConfig(() => {
         apply: 'build',
         enforce: 'post',
         generateBundle(_, bundle) {
-          bundle['404.html'] = {
-            ...bundle['index.html'],
+          const v = bundle['index.html'];
+          const source = v.type === 'asset' ? v.source : '';
+          if (!source) return;
+          this.emitFile({
             fileName: '404.html',
-          };
+            type: 'asset',
+            source,
+          });
         },
       },
     ],
