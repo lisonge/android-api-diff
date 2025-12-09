@@ -46,7 +46,7 @@ export const persistentFetch = async (
   });
 };
 
-const structCache = createDB('structCacheV4');
+const structCache = createDB('structCacheV5');
 
 export const getOrSetStructCache = async (
   filePath: string,

@@ -47,18 +47,20 @@ export const getJavaStructList = (text: string): ClassStruct[] => {
   };
   listener.exitClassDeclaration = exitStruct;
   listener.enterConstructorDeclaration = (ctx) => {
-    const name = ctx.identifier().getText();
+    const id = ctx.identifier();
+    const name = id.getText();
     const paramTypeList = getParamTypeList(ctx.formalParameters().children);
     const type = `(${paramTypeList.join(', ')}) -> ` + name;
     addMember({
       name,
       type,
-      loc: ctx.start.line,
+      loc: id.start.line,
       parameterCount: paramTypeList.length,
     });
   };
   listener.enterMethodDeclaration = (ctx) => {
-    const name = ctx.identifier().getText();
+    const id = ctx.identifier();
+    const name = id.getText();
     const returnType = ctx.typeTypeOrVoid().getText();
     const paramTypeList = getParamTypeList(ctx.formalParameters().children);
     const type = `(${paramTypeList.join(', ')}) -> ${returnType}`;
@@ -66,22 +68,22 @@ export const getJavaStructList = (text: string): ClassStruct[] => {
     addMember({
       name,
       type,
-      loc: ctx.start.line,
+      loc: id.start.line,
       parameterCount: paramTypeList.length,
     });
   };
   listener.enterFieldDeclaration = (ctx) => {
-    const name = ctx
+    const id = ctx
       .variableDeclarators()
       .variableDeclarator(0)
       .variableDeclaratorId()
-      .identifier()
-      .getText();
+      .identifier();
+    const name = id.getText();
     const type = ctx.typeType().getText();
     addMember({
       name,
       type,
-      loc: ctx.start.line,
+      loc: id.start.line,
     });
   };
   listener.enterInterfaceDeclaration = (ctx) => {
@@ -90,24 +92,26 @@ export const getJavaStructList = (text: string): ClassStruct[] => {
   listener.exitInterfaceDeclaration = exitStruct;
   listener.enterInterfaceMethodDeclaration = (ctx) => {
     const b = ctx.interfaceCommonBodyDeclaration();
-    const name = b.identifier().getText();
+    const id = b.identifier();
+    const name = id.getText();
     const returnType = b.typeTypeOrVoid().getText();
     const paramTypeList = getParamTypeList(b.formalParameters().children);
     const type = `(${paramTypeList.join(', ')}) -> ${returnType}`;
     addMember({
       name,
       type,
-      loc: ctx.start.line,
+      loc: id.start.line,
       parameterCount: paramTypeList.length,
     });
   };
   listener.enterConstDeclaration = (ctx) => {
-    const name = ctx.constantDeclarator(0).identifier().getText();
+    const id = ctx.constantDeclarator(0).identifier();
+    const name = id.getText();
     const type = ctx.typeType().getText();
     addMember({
       name,
       type,
-      loc: ctx.start.line,
+      loc: id.start.line,
     });
   };
   ParseTreeWalker.DEFAULT.walk(listener, result);

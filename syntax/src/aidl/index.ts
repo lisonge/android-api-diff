@@ -21,7 +21,8 @@ export const getAIDLStructList = (text: string): ClassStruct[] => {
   };
   listener.exitInterfaceDeclaration = exitStruct;
   listener.enterMethodDeclaration = (ctx) => {
-    const name = ctx.IDENTIFIER().getText();
+    const id = ctx.IDENTIFIER();
+    const name = id.getText();
     const returnType = ctx.type_().getText();
     const paramTypeList = (ctx.parameterList()?.parameter_list() || []).map(
       (p) => {
@@ -32,16 +33,17 @@ export const getAIDLStructList = (text: string): ClassStruct[] => {
     addMember({
       name,
       type,
-      loc: ctx.start.line,
+      loc: id.symbol.line,
     });
   };
   listener.enterConstantDeclaration = (ctx) => {
-    const name = ctx.constDeclaration().IDENTIFIER().getText();
+    const id = ctx.constDeclaration().IDENTIFIER();
+    const name = id.getText();
     const type = ctx.constDeclaration().type_().getText();
     addMember({
       name,
       type,
-      loc: ctx.start.line,
+      loc: id.symbol.line,
     });
   };
   ParseTreeWalker.DEFAULT.walk(listener, result);
