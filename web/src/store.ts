@@ -132,35 +132,56 @@ export const searchFilePathByName = (name: string): string | undefined => {
   }
   return aidlJavaFiles.value.find((v) => v.endsWith(a));
 };
-// com.android.internal.app.IAppOpsService
-// com.android.internal.app.IAppOpsService#setMode
-// android.content.pm.IPackageManager#getInstalledPackages(int, int)
-const clazzSeparator = /[#\:]+/;
-const propReg = /^[_0-9a-zA-Z]+/g;
+
 export const searchFilePathByRefName = (
   name: string,
 ): SearchFromData | undefined => {
   name = name.trim();
   if (!name) return;
-  const [clazzName, tempProp = ''] = name.split(clazzSeparator, 2);
-  const targetProp = tempProp.match(propReg)?.[0];
-  if (!targetProp) return;
-  let filePath: string | undefined;
-  let targetName = '';
-  for (const mayName of getMayClassNames(clazzName)) {
-    filePath = searchFilePathByName(mayName);
-    targetName = mayName.split('.').at(-1)!;
-    if (filePath) break;
+  for (const [mayClass, mayProp] of getMayClassAndPropNames(name)) {
+    const filePath = searchFilePathByName(mayClass);
+    if (!filePath) continue;
+    return {
+      targetUrl:
+        `https://cs.android.com/android/platform/superproject/+/android-latest-release:frameworks/base/` +
+        filePath,
+      targetName: mayClass,
+      targetProp: mayProp,
+    };
   }
-  if (!filePath) return;
-  return {
-    targetUrl:
-      `https://cs.android.com/android/platform/superproject/+/android-latest-release:frameworks/base/` +
-      filePath,
-    targetName,
-    targetProp,
-  };
 };
+
+// com.android.internal.app.IAppOpsService
+// com.android.internal.app.IAppOpsService#setMode
+// android.content.pm.IPackageManager#getInstalledPackages(int, int)
+// AppOpsManagerHidden.OP_POST_NOTIFICATION
+const propReg = /^[_0-9a-zA-Z]+/g;
+const getMayClassAndPropNames = (name: string): [string, string][] => {
+  const res: [string, string][] = [];
+  const push = (className: string, propName: string) => {
+    if (!res.some(([c, p]) => c === className && p === propName)) {
+      res.push([className, propName]);
+    }
+  };
+  let tempName = '';
+  let tempProp = '';
+  if (name.includes('#')) {
+    [tempName, tempProp] = name.split('#', 2);
+  } else if (name.includes('.')) {
+    const i = name.lastIndexOf('.');
+    tempName = name.substring(0, i);
+    tempProp = name.substring(i + 1);
+  }
+  propReg.lastIndex = 0;
+  tempProp = tempProp.match(propReg)?.[0] || '';
+  if (tempProp) {
+    getMayClassNames(tempName).forEach((className) => {
+      push(className, tempProp);
+    });
+  }
+  return res;
+};
+
 // android.content.pm.IPackageManager.A -> [android.content.pm.IPackageManager.A, android.content.pm.IPackageManager]
 // android.content.pm.PackageInfoHidden -> [android.content.pm.PackageInfoHidden, android.content.pm.PackageInfo]
 const getMayClassNames = (name: string): string[] => {
