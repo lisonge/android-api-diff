@@ -145,7 +145,7 @@ export const searchFilePathByRefName = (
       targetUrl:
         `https://cs.android.com/android/platform/superproject/+/android-latest-release:frameworks/base/` +
         filePath,
-      targetName: mayClass,
+      targetName: mayClass.split('.').at(-1)!,
       targetProp: mayProp,
     };
   }
@@ -158,11 +158,12 @@ export const searchFilePathByRefName = (
 const propReg = /^[_0-9a-zA-Z]+/g;
 const getMayClassAndPropNames = (name: string): [string, string][] => {
   const res: [string, string][] = [];
-  propReg.lastIndex = 0;
   let tempName = '';
   let tempProp = '';
   const append = () => {
     if (!tempName) return;
+    propReg.lastIndex = 0;
+    tempProp = tempProp.match(propReg)?.[0] || '';
     getMayClassNames(tempName).forEach((className) => {
       if (!res.some(([c, p]) => c === className && p === tempProp)) {
         res.push([className, tempProp]);
@@ -171,7 +172,6 @@ const getMayClassAndPropNames = (name: string): [string, string][] => {
   };
   if (name.includes('#')) {
     [tempName, tempProp] = name.split('#', 2);
-    tempProp = tempProp.match(propReg)?.[0] || '';
     append();
   } else if (name.includes('.')) {
     const i = name.lastIndexOf('.');
