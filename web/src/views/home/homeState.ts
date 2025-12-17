@@ -126,7 +126,7 @@ export const useSharedHomeState = createSharedComposable(() => {
     if (!builder?.filePath) return emptyArray;
     const targetName = searchFromData.value.targetName;
     const propName = searchFromData.value.targetProp;
-    if (!targetName || !propName || !isCanParsedUrl.value) return emptyArray;
+    if (!targetName || !isCanParsedUrl.value) return emptyArray;
     return androidOrderTags
       .map((tag) => {
         const filePath = tag + builder.filePath;

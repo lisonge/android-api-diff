@@ -158,26 +158,33 @@ export const searchFilePathByRefName = (
 const propReg = /^[_0-9a-zA-Z]+/g;
 const getMayClassAndPropNames = (name: string): [string, string][] => {
   const res: [string, string][] = [];
-  const push = (className: string, propName: string) => {
-    if (!res.some(([c, p]) => c === className && p === propName)) {
-      res.push([className, propName]);
-    }
-  };
+  propReg.lastIndex = 0;
   let tempName = '';
   let tempProp = '';
+  const append = () => {
+    if (!tempName) return;
+    getMayClassNames(tempName).forEach((className) => {
+      if (!res.some(([c, p]) => c === className && p === tempProp)) {
+        res.push([className, tempProp]);
+      }
+    });
+  };
   if (name.includes('#')) {
     [tempName, tempProp] = name.split('#', 2);
+    tempProp = tempProp.match(propReg)?.[0] || '';
+    append();
   } else if (name.includes('.')) {
     const i = name.lastIndexOf('.');
     tempName = name.substring(0, i);
     tempProp = name.substring(i + 1);
-  }
-  propReg.lastIndex = 0;
-  tempProp = tempProp.match(propReg)?.[0] || '';
-  if (tempProp) {
-    getMayClassNames(tempName).forEach((className) => {
-      push(className, tempProp);
-    });
+    append();
+    tempName = name;
+    tempProp = '';
+    append();
+  } else {
+    tempName = name;
+    tempProp = '';
+    append();
   }
   return res;
 };
