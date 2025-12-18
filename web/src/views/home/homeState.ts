@@ -138,13 +138,20 @@ export const useSharedHomeState = createSharedComposable(() => {
         let members: DiffResultItem['members'] | undefined;
         if (target) {
           typeColor = '#000'; // not found prop
-          members = target.members.filter((v) => v.name === propName);
-          if (members.length > 0) {
-            typeDesc = members
-              .sort((a, b) => (a.parameterCount ?? 0) - (b.parameterCount ?? 0))
-              .map((v) => v.type)
-              .join('\n');
-            typeColor = getCachedTypeColor(typeDesc);
+          if (!propName) {
+            // only search class
+            typeColor = colors[0];
+          } else {
+            members = target.members.filter((v) => v.name === propName);
+            if (members.length > 0) {
+              typeDesc = members
+                .sort(
+                  (a, b) => (a.parameterCount ?? 0) - (b.parameterCount ?? 0),
+                )
+                .map((v) => v.type)
+                .join('\n');
+              typeColor = getCachedTypeColor(typeDesc);
+            }
           }
         }
         const r: DiffResultItem = {
