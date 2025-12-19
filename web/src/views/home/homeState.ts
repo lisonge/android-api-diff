@@ -13,6 +13,7 @@ import {
   createSharedComposable,
   useLocalStorage,
   watchDebounced,
+  watchImmediate,
 } from '@vueuse/core';
 import { useRouteQuery } from '@vueuse/router';
 import { computed, onScopeDispose, onUnmounted, watch } from 'vue';
@@ -61,7 +62,7 @@ export const useSharedHomeState = createSharedComposable(() => {
 
   const rawTitle = document.title;
   onScopeDispose(() => (document.title = rawTitle));
-  watch(
+  watchImmediate(
     computed(() => {
       if (isRefMode.value) {
         return searchRef.value;
