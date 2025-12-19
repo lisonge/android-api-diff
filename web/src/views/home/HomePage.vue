@@ -3,11 +3,10 @@ import SvgIcon from '@/components/SvgIcon.vue';
 import { estimateDesc, exampleList } from '@/store';
 import androidVersionList from '@/utils/android.data';
 import TagCard from '@/views/home/TagCard.vue';
-import { useTitle } from '@vueuse/core';
-import { useSharedHomeState } from './homeState';
 import DiffResultList from './DiffResultList.vue';
+import { useSharedHomeState } from './homeState';
 
-const title = useTitle();
+const title = document.title;
 const {
   actualMainInput,
   handleDiff,

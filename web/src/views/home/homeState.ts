@@ -15,7 +15,7 @@ import {
   watchDebounced,
 } from '@vueuse/core';
 import { useRouteQuery } from '@vueuse/router';
-import { computed, onUnmounted, watch } from 'vue';
+import { computed, onScopeDispose, onUnmounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 if (import.meta.hot) {
@@ -58,6 +58,21 @@ export const useSharedHomeState = createSharedComposable(() => {
   } else if (searchUrl.value) {
     isRefMode.value = false;
   }
+
+  const rawTitle = document.title;
+  onScopeDispose(() => (document.title = rawTitle));
+  watch(
+    computed(() => {
+      if (isRefMode.value) {
+        return searchRef.value;
+      }
+      return searchName.value + '.' + searchProp.value;
+    }),
+    (v) => {
+      document.title = v;
+    },
+  );
+
   const router = useRouter();
   const switchRefMode = () => {
     isRefMode.value = !isRefMode.value;
