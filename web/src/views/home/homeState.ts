@@ -70,7 +70,7 @@ export const useSharedHomeState = createSharedComposable(() => {
       return searchName.value + '.' + searchProp.value;
     }),
     (v) => {
-      document.title = v;
+      document.title = v || rawTitle;
     },
   );
 
