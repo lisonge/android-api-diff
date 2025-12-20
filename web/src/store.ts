@@ -98,7 +98,17 @@ setTimeout(async () => {
   const text = await persistentFetch(
     'https://raw.githubusercontent.com/android-cs/16/refs/heads/main/aidl_java_files.txt',
   );
-  aidlJavaFiles.value = text.split('\n');
+  const files = text.split('\n').sort();
+  const normalFiles: string[] = [];
+  const laterFiles: string[] = [];
+  for (const file of files) {
+    if (file.includes('/test/') || file.includes('/tests/')) {
+      laterFiles.push(file);
+    } else {
+      normalFiles.push(file);
+    }
+  }
+  aidlJavaFiles.value = normalFiles.concat(laterFiles);
 });
 
 // IActivityManager
