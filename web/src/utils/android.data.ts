@@ -15,14 +15,23 @@ const androidAliasMap: Record<string, string> = {
 };
 
 const tagReg = /^android-\d+\.\d+\.\d+_r\d+$/;
+const xssiPrefix = `)]}'\n`;
+
+interface IGoogleSourceTagsResponse {
+  [tag: string]: {
+    peeled: string;
+    value: string;
+  };
+}
 
 const googleTags = await fetch(
   'https://android.googlesource.com/platform/frameworks/base/+refs/tags/?format=JSON',
 )
   .then((r) => r.text())
-  .then((r) =>
-    Object.keys(JSON.parse(r.substring(4))).filter((v) => tagReg.test(v)),
-  );
+  .then<IGoogleSourceTagsResponse>((r) => {
+    return JSON.parse(r.substring(xssiPrefix.length));
+  })
+  .then((r) => Object.keys(r).filter((v) => tagReg.test(v)));
 
 // use GITHUB_TOKEN to avoid API rate limit exceeded
 const githubTags = await fetch(
