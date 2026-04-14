@@ -15,7 +15,6 @@ import {
   watchDebounced,
   watchImmediate,
 } from '@vueuse/core';
-import { useRouteQuery } from '@vueuse/router';
 import { computed, onScopeDispose, onUnmounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -47,19 +46,68 @@ const getLastMode = () => {
 
 type ModeType = (typeof MODE)[keyof typeof MODE];
 
+interface UrlParams {
+  // /?url=1&name=2&prop=3
+  url?: string;
+  name?: string;
+  prop?: string;
+
+  // /i/IActivityTaskManager#getTasks
+  ref?: string;
+}
+
 export const useSharedHomeState = createSharedComposable(() => {
   const route = useRoute();
   const router = useRouter();
-  const mode = useLocalStorage<ModeType>(modeKey, getLastMode());
-  const isRefMode = computed({
-    get: () => mode.value === MODE.REF,
-    set: (v: boolean) => {
-      mode.value = v ? MODE.REF : MODE.FILE;
+
+  const params = computed<UrlParams>({
+    get: () => {
+      if (route.path === '/') {
+        return {
+          url: route.query.url as string | undefined,
+          name: route.query.name as string | undefined,
+          prop: route.query.prop as string | undefined,
+        };
+      }
+      if (route.fullPath.startsWith('/i/')) {
+        return {
+          ref: route.fullPath.substring('/i/'.length) || undefined,
+        };
+      }
+      return {};
+    },
+    set: (v: UrlParams) => {
+      if (v.ref) {
+        router.replace('/i/' + v.ref);
+      } else {
+        const query = Object.fromEntries(
+          Object.entries(v).filter(([_, v]) => v),
+        );
+        router.replace({
+          path: '/',
+          query,
+        });
+      }
     },
   });
-  const searchUrl = useRouteQuery<string>('url', '');
-  const searchName = useRouteQuery<string>('name', '');
-  const searchProp = useRouteQuery<string>('prop', '');
+  const searchUrl = computed({
+    get: () => params.value.url || '',
+    set: (v: string) => {
+      params.value = { ...params.value, url: v };
+    },
+  });
+  const searchName = computed({
+    get: () => params.value.name || '',
+    set: (v: string) => {
+      params.value = { ...params.value, name: v };
+    },
+  });
+  const searchProp = computed({
+    get: () => params.value.prop || '',
+    set: (v: string) => {
+      params.value = { ...params.value, prop: v };
+    },
+  });
   watch(searchUrl, () => {
     if (!searchUrl.value) {
       searchName.value = '';
@@ -75,7 +123,20 @@ export const useSharedHomeState = createSharedComposable(() => {
       searchName.value = v.split('/').at(-1)!.replace(/\..+$/g, '');
     }
   });
-  const searchRef = useRouteQuery<string>('ref', '');
+  const searchRef = computed({
+    get: () => params.value.ref || '',
+    set: (v: string) => {
+      params.value = { ...params.value, ref: v };
+    },
+  });
+
+  const mode = useLocalStorage<ModeType>(modeKey, getLastMode());
+  const isRefMode = computed({
+    get: () => mode.value === MODE.REF,
+    set: (v: boolean) => {
+      mode.value = v ? MODE.REF : MODE.FILE;
+    },
+  });
   if (searchRef.value) {
     isRefMode.value = true;
   } else if (searchUrl.value) {
@@ -98,7 +159,7 @@ export const useSharedHomeState = createSharedComposable(() => {
 
   const switchRefMode = () => {
     isRefMode.value = !isRefMode.value;
-    router.replace({ query: {} });
+    params.value = {};
   };
 
   const actualMainInput = computed({
@@ -265,11 +326,15 @@ export const useSharedHomeState = createSharedComposable(() => {
   const handleExample = (item: ExampleItem) => {
     if (handleDiff.loading) return;
     if (isRefMode.value) {
-      searchRef.value = item.refName;
+      params.value = {
+        ref: item.refName,
+      };
     } else {
-      searchUrl.value = item.url;
-      searchName.value = item.targetName;
-      searchProp.value = item.propName;
+      params.value = {
+        url: item.url,
+        name: item.targetName,
+        prop: item.propName,
+      };
     }
     setTimeout(handleDiff.invoke, 300);
   };

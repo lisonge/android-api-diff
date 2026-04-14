@@ -1,33 +1,25 @@
 import { createWebHistory, createRouter } from 'vue-router';
 
+const homeFc = () => import('./views/home/HomePage.vue');
 export default createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', component: () => import('./views/home/HomePage.vue') },
     {
-      path: '/i/:ref',
-      redirect(to) {
-        // http://127.0.0.1:8920/i/IActivityTaskManager#getTasks
-        return {
-          path: '/',
-          query: {
-            ref: to.params.ref + to.hash,
-          },
-          hash: '',
-        };
+      // /?url=1&name=2&prop=3
+      path: '/',
+      component: homeFc,
+      beforeEnter: (to, from, next) => {
+        if (to.query.ref) {
+          next(`/i/${to.query.ref}`);
+        } else {
+          next();
+        }
       },
     },
     {
-      path: '/i/:clazz/:prop',
-      redirect(to) {
-        // http://127.0.0.1:8920/i/IActivityTaskManager/getTasks
-        return {
-          path: '/',
-          query: {
-            ref: `${to.params.clazz}#${to.params.prop}`,
-          },
-        };
-      },
+      // /i/IActivityTaskManager#getTasks
+      path: '/i/:pathMatch(.*)*',
+      component: homeFc,
     },
     {
       path: '/:pathMatch(.*)*',
