@@ -150,7 +150,7 @@ export const useSharedHomeState = createSharedComposable(() => {
       if (isRefMode.value) {
         return searchRef.value;
       }
-      return searchName.value + '.' + searchProp.value;
+      return [searchName.value, searchProp.value].filter(Boolean).join('.');
     }),
     (v) => {
       document.title = v || rawTitle;
