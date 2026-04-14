@@ -320,16 +320,13 @@ export const useSharedHomeState = createSharedComposable(() => {
     if (!urlBuilder.value) return;
     const builder = urlBuilder.value;
     // 数组作为矩阵列，按行遍历，优先访问每个大版本的头部的小版本
-    const matrixSize =
-      androidVersionList.length *
-      Math.max(...androidVersionList.map((v) => v.tags.length));
-    for (let i = 0; i < matrixSize; i++) {
-      const col = i % androidVersionList.length;
-      const row = Math.floor(i / androidVersionList.length);
-      const tag = androidVersionList[col].tags[row];
-      if (!tag) continue;
-      if (s.signal.aborted) return;
-      await pullStructsByUrl(tag + builder.filePath, s);
+    const maxRows = androidVersionList.reduce((m, v) => Math.max(m, v.tags.length), 0);
+    for (let row = 0; row < maxRows; row++) {
+      for (const version of androidVersionList) {
+        if (row >= version.tags.length) continue;
+        if (s.signal.aborted) return;
+        await pullStructsByUrl(version.tags[row] + builder.filePath, s);
+      }
     }
   });
   setTimeout(handleDiff.invoke);
