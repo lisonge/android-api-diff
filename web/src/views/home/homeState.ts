@@ -17,7 +17,7 @@ import {
 } from '@vueuse/core';
 import { useRouteQuery } from '@vueuse/router';
 import { computed, onScopeDispose, onUnmounted, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 if (import.meta.hot) {
   import.meta.hot.accept(() => {
@@ -27,12 +27,34 @@ if (import.meta.hot) {
 
 const androidOrderTags = androidVersionList.flatMap((v) => v.tags);
 
+const MODE = {
+  FILE: 'file',
+  REF: 'ref',
+} as const;
+
+const modeKey = 'mode';
+const getLastMode = () => {
+  const mode = localStorage.getItem(modeKey);
+  switch (mode) {
+    case MODE.FILE:
+      return MODE.FILE;
+    case MODE.REF:
+      return MODE.REF;
+    default:
+      return MODE.REF;
+  }
+};
+
+type ModeType = (typeof MODE)[keyof typeof MODE];
+
 export const useSharedHomeState = createSharedComposable(() => {
-  const mode = useLocalStorage<'file' | 'ref'>('mode', 'ref');
+  const route = useRoute();
+  const router = useRouter();
+  const mode = useLocalStorage<ModeType>(modeKey, getLastMode());
   const isRefMode = computed({
-    get: () => mode.value === 'ref',
+    get: () => mode.value === MODE.REF,
     set: (v: boolean) => {
-      mode.value = v ? 'ref' : 'file';
+      mode.value = v ? MODE.REF : MODE.FILE;
     },
   });
   const searchUrl = useRouteQuery<string>('url', '');
@@ -74,7 +96,6 @@ export const useSharedHomeState = createSharedComposable(() => {
     },
   );
 
-  const router = useRouter();
   const switchRefMode = () => {
     isRefMode.value = !isRefMode.value;
     router.replace({ query: {} });
