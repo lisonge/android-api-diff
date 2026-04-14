@@ -2,12 +2,25 @@
 import { useElementSize } from '@vueuse/core';
 import { shallowRef } from 'vue';
 import { useSharedHomeState } from './homeState';
+import androidVersionList from '@/utils/android.data';
 
 const { diffTypeReult } = useSharedHomeState();
 
-const wrapRef = shallowRef<HTMLElement>();
 const viewRef = shallowRef<HTMLElement>();
 const { height } = useElementSize(viewRef);
+
+const getTagRangeDesc = (range: string[]): string => {
+  if (range.length === 1) return range[0];
+  const st = range[0];
+  const ed = range.at(-1)!;
+  const bigSt = androidVersionList.find((v) => v.tags[0] === st)?.version;
+  const bigEd = androidVersionList.find((v) => v.tags.at(-1) === ed)?.version;
+  if (bigSt || bigEd) {
+    if (bigSt && bigEd && bigSt === bigEd) return `android-${bigSt}`;
+    return `${bigSt ? `android-${bigSt}` : st} - ${bigEd ? `android-${bigEd}` : ed}`;
+  }
+  return `${st} - ${ed}`;
+};
 </script>
 <template>
   <div
@@ -51,9 +64,7 @@ const { height } = useElementSize(viewRef);
             bg-gray-100
             rounded-4px
           >
-            {{
-              range.length > 1 ? [range[0], range.at(-1)].join(' - ') : range[0]
-            }}
+            {{ getTagRangeDesc(range) }}
           </div>
         </div>
       </div>

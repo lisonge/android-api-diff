@@ -272,16 +272,21 @@ export const useSharedHomeState = createSharedComposable(() => {
     const list: DiffTypeItem[] = [];
     androidOrderTags.forEach((tag, index) => {
       const res = getDiffResult(tag);
-      if (!res) return;
-      let typeItem = list.find((v) => v.typeDesc === res.typeDesc);
-      if (!typeItem) {
-        typeItem = {
-          typeDesc: res.typeDesc,
-          typeColor: res.typeColor,
-          tagRanges: [],
-        };
-        list.push(typeItem);
+      let typeItem: DiffTypeItem | undefined;
+      if (res) {
+        typeItem = list.find((v) => v.typeDesc === res.typeDesc);
+        if (!typeItem) {
+          typeItem = {
+            typeDesc: res.typeDesc,
+            typeColor: res.typeColor,
+            tagRanges: [],
+          };
+          list.push(typeItem);
+        }
+      } else {
+        typeItem = list.at(-1);
       }
+      if (!typeItem) return;
       if (typeItem.tagRanges.length === 0) {
         typeItem.tagRanges.push([tag]);
         return;
@@ -314,11 +319,17 @@ export const useSharedHomeState = createSharedComposable(() => {
     }
     if (!urlBuilder.value) return;
     const builder = urlBuilder.value;
-    for (const item of androidVersionList) {
+    // 数组作为矩阵列，按行遍历，优先访问每个大版本的头部的小版本
+    const matrixSize =
+      androidVersionList.length *
+      Math.max(...androidVersionList.map((v) => v.tags.length));
+    for (let i = 0; i < matrixSize; i++) {
+      const col = i % androidVersionList.length;
+      const row = Math.floor(i / androidVersionList.length);
+      const tag = androidVersionList[col].tags[row];
+      if (!tag) continue;
       if (s.signal.aborted) return;
-      await Promise.all(
-        item.tags.map((tag) => pullStructsByUrl(tag + builder.filePath, s)),
-      );
+      await pullStructsByUrl(tag + builder.filePath, s);
     }
   });
   setTimeout(handleDiff.invoke);
