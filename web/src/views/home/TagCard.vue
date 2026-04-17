@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useSharedHomeState } from './homeState';
 import { getSourceUrlWithLine } from '@/utils/url';
+import { computed } from 'vue';
+import { ANDROID_PREFIX_LEN, useSharedHomeState } from './homeState';
 
 const props = defineProps<{
   tag: string;
@@ -38,6 +38,10 @@ const tagColor = computed(() => {
   }
   return diffResult.value?.typeColor;
 });
+
+const tagName = computed(() => {
+  return props.tag.substring(ANDROID_PREFIX_LEN);
+});
 </script>
 <template>
   <div class="TagCard" flex gap-4px items-center>
@@ -46,7 +50,7 @@ const tagColor = computed(() => {
       transition-colors
       :title="title"
       :style="{
-        background: tagColor,
+        background: tagColor || '#00000040',
       }"
     ></div>
     <a
@@ -57,7 +61,7 @@ const tagColor = computed(() => {
       hover="color-[rgb(from_currentColor_r_g_b_/_50%)]"
       whitespace-nowrap
     >
-      {{ tag }}
+      {{ tagName }}
     </a>
     <a
       v-else
@@ -67,7 +71,7 @@ const tagColor = computed(() => {
         color: tagColor,
       }"
     >
-      {{ tag }}
+      {{ tagName }}
     </a>
   </div>
 </template>

@@ -9,3 +9,36 @@
 .hidden-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+@font-face {
+  font-family: 'MesloLGL Nerd Font Mono';
+  src: url('/font/MesloLGSNerdFontMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'MesloLGL Nerd Font Mono';
+  src: url('/font/MesloLGSNerdFontMono-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'MesloLGL Nerd Font Mono';
+  src: url('/font/MesloLGSNerdFontMono-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'MesloLGL Nerd Font Mono';
+  src: url('/font/MesloLGSNerdFontMono-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+[font-meslo],
+.font-meslo {
+  font-family: 'MesloLGL Nerd Font Mono', monospace;
+}

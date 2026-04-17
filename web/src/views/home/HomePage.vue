@@ -21,7 +21,7 @@ const {
 } = useSharedHomeState();
 </script>
 <template>
-  <div p-12px text-14px flex flex-col class="[--gap:8px]">
+  <div font-meslo p-12px text-14px flex flex-col class="[--gap:8px]">
     <div mb="--gap" flex items-center gap-24px>
       <div text-20px font-400>{{ title }}</div>
       <div flex-1 flex items-center gap-8px>
@@ -57,7 +57,7 @@ const {
         <SvgIcon name="github" size-20px />
       </a>
     </div>
-    <div mb="--gap" flex gap-24px items-center>
+    <div flex gap-24px items-center>
       <div title="switch search mode">
         <SvgIcon
           name="exchange"
@@ -159,7 +159,9 @@ const {
         <div>{{ handleDiff.loading ? `STOP` : `DIFF` }}</div>
       </div>
     </div>
-    <DiffResultList />
+    <div pt="--gap" sticky top-0 bg-white>
+      <DiffResultList />
+    </div>
     <div mb="--gap" flex gap-16px overflow-scroll hidden-scrollbar>
       <div
         v-for="item in androidVersionList"
@@ -185,9 +187,15 @@ const {
             }"
           ></div>
         </div>
-        <div text-12px font-600 flex justify-center gap-4px>
+        <div text-12px leading-16px font-600 flex justify-center gap-4px>
           <div>{{ item.version }}</div>
-          <div>{{ item.alias }}</div>
+          <div
+            :class="{
+              'text-10px': Number(item.version) >= 13,
+            }"
+          >
+            {{ item.alias }}
+          </div>
         </div>
         <div flex flex-col gap-4px>
           <TagCard v-for="tag in item.tags" :key="tag" :tag="tag" />

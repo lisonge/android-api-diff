@@ -56,6 +56,10 @@ interface UrlParams {
   ref?: string;
 }
 
+export const ANDROID_PREFIX_LEN = 'android-'.length;
+
+export const NOT_FOUND_TYPE_COLOR = '#00000080';
+
 export const useSharedHomeState = createSharedComposable(() => {
   const route = useRoute();
   const router = useRouter();
@@ -231,7 +235,7 @@ export const useSharedHomeState = createSharedComposable(() => {
         const structs = fileStructsMap[tag + builder.filePath];
         if (!structs) return;
         let typeDesc = '';
-        let typeColor = '#00000080'; // not found file
+        let typeColor = NOT_FOUND_TYPE_COLOR; // not found file
         const target = findStructByName(structs, targetName);
         let members: DiffResultItem['members'] | undefined;
         if (target) {
