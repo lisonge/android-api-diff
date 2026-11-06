@@ -8,9 +8,11 @@
     "build": "pnpm -F android-api-diff-web build",
     "preview": "pnpm -F android-api-diff-web preview",
     "format": "prettier --cache --write --ignore-unknown .",
-    "test:unit": "pnpm prepare:index && node scripts/test.mjs",
+    "test:unit": "pnpm prepare:assets && node scripts/test.mjs",
     "test": "pnpm type-check && pnpm test:unit && pnpm -F android-api-diff test:package",
     "prepare:index": "node scripts/prepare-index.ts",
+    "prepare:wasm": "node scripts/prepare-wasm.ts",
+    "prepare:assets": "pnpm prepare:wasm && pnpm prepare:index",
     "upload:index": "node scripts/upload-index.ts"
   },
   "dependencies": {
@@ -31,6 +33,9 @@
     "user-attachments": "catalog:",
     "tailwindcss": "catalog:",
     "@tailwindcss/vite": "catalog:"
+  },
+  "devDependencies": {
+    "tree-sitter-java": "catalog:"
   },
   "devEngines": {
     "runtime": {

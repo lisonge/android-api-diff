@@ -26,6 +26,7 @@ coverage
 # Local build/data caches
 .cache/
 /android-api-diff/src/core/catalog/generated/index-data.json
+/android-api-diff/src/generated/
 .tmp-mcp-screens
 
 .antlr

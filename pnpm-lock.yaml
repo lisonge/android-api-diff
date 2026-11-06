@@ -286,6 +286,10 @@ importers:
       vue-tsc:
         specifier: 'catalog:'
         version: 3.3.5(typescript@6.0.3)
+    devDependencies:
+      tree-sitter-java:
+        specifier: 'catalog:'
+        version: 0.23.5
 
   android-api-diff:
     dependencies:
@@ -298,9 +302,6 @@ importers:
       skills:
         specifier: 'catalog:'
         version: 1.5.20
-      tree-sitter-java:
-        specifier: 'catalog:'
-        version: 0.23.5
       web-tree-sitter:
         specifier: 'catalog:'
         version: 0.27.1
@@ -310,9 +311,6 @@ importers:
       android-api-diff:
         specifier: workspace:*
         version: link:../android-api-diff
-      tree-sitter-java:
-        specifier: 'catalog:'
-        version: 0.23.5
       web-tree-sitter:
         specifier: 'catalog:'
         version: 0.27.1

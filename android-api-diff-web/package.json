@@ -5,8 +5,8 @@
   "scripts": {
     "type-check": "vue-tsc",
     "test:overloads": "node --test scripts/overloads.test.ts",
-    "dev": "pnpm prepare:index && vite",
-    "build": "pnpm prepare:index && vite build",
+    "dev": "pnpm -w prepare:assets && vite",
+    "build": "pnpm -w prepare:assets && vite build",
     "preview": "vite preview",
     "test:query": "node --test scripts/queryView.test.ts",
     "test:parser-worker": "node --test scripts/parserWorker.test.ts",
@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "android-api-diff": "workspace:*",
-    "tree-sitter-java": "catalog:",
     "web-tree-sitter": "catalog:"
   }
 }

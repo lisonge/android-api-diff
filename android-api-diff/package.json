@@ -1,6 +1,6 @@
 {
   "name": "android-api-diff",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Inspect Android framework API changes and generate hidden-API Java code",
   "type": "module",
   "keywords": [
@@ -35,9 +35,9 @@
     "android-api-diff": "./src/cli/index.ts"
   },
   "scripts": {
-    "build": "pnpm prepare:index && tsdown",
+    "build": "pnpm -w prepare:assets && tsdown",
     "prepublishOnly": "pnpm build",
-    "start": "pnpm prepare:index && node src/cli/index.ts",
+    "start": "pnpm -w prepare:assets && node src/cli/index.ts",
     "test:cli": "node --test src/cli/cli.test.ts",
     "test:cache": "node --test src/node/nodeRuntime.test.ts src/node/nodeNetwork.test.ts",
     "type-check": "tsc",
@@ -57,7 +57,6 @@
   "dependencies": {
     "p-limit": "catalog:",
     "skills": "catalog:",
-    "tree-sitter-java": "catalog:",
     "web-tree-sitter": "catalog:",
     "aidl-parser": "catalog:"
   },

@@ -35,6 +35,27 @@ const threadWorker = (): ParserWorker => {
   const thread = new Worker(
     `
     const { parentPort } = require('node:worker_threads');
+    const { registerHooks } = require('node:module');
+    // Adapt Vite's asset URL import for this Node-only Worker harness.
+    registerHooks({
+      resolve(specifier, context, nextResolve) {
+        if (specifier.endsWith('.wasm?url')) {
+          const resolved = nextResolve(specifier.slice(0, -4), context);
+          return { ...resolved, url: resolved.url + '?url' };
+        }
+        return nextResolve(specifier, context);
+      },
+      load(url, context, nextLoad) {
+        if (url.endsWith('.wasm?url')) {
+          return {
+            format: 'module',
+            source: 'export default ' + JSON.stringify(url.slice(0, -4)),
+            shortCircuit: true,
+          };
+        }
+        return nextLoad(url, context);
+      },
+    });
     globalThis.postMessage = data => parentPort.postMessage(data);
     import(${JSON.stringify(moduleUrl)}).then(() => {
       parentPort.on('message', data => globalThis.onmessage({ data }));

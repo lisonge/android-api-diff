@@ -30,7 +30,20 @@ test('built constant comparisons use WASM and production JS excludes ANTLR', asy
   }
 });
 
-test('built Java parser loads its dependency WASM and returns the shared model', async () => {
+test('built Java parser ships its WASM without a tree-sitter-java runtime dependency', async () => {
+  const root = new URL('../dist/', import.meta.url);
+  const files = await readdir(root, { recursive: true });
+  assert.ok(files.some((path) => /tree-sitter-java-.*\.wasm$/.test(path)));
+  const manifest = JSON.parse(
+    await readFile(new URL('../package.json', import.meta.url), 'utf8'),
+  );
+  assert.equal(manifest.dependencies['tree-sitter-java'], undefined);
+  for (const path of files.filter((path) => path.endsWith('.js'))) {
+    assert.doesNotMatch(
+      await readFile(new URL(path.replaceAll('\\', '/'), root), 'utf8'),
+      /node_modules\/tree-sitter-java|import\.meta\.resolve\(['"]tree-sitter-java/,
+    );
+  }
   const file = await parseSource(
     'java',
     'package sample; public class Example { public int value; }',

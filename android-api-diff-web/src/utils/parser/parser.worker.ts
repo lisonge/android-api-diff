@@ -1,4 +1,5 @@
 import type { ParseRequest, ParseResponse } from './protocol.ts';
+import runtimeUrl from 'web-tree-sitter/web-tree-sitter.wasm?url';
 import {
   initializeJavaParser,
   parseSource,
@@ -18,14 +19,7 @@ scope.onmessage = async ({ data }) => {
   try {
     if (data.kind === 'constant-keys' || data.language === 'java') {
       await initializeJavaParser({
-        runtime: new URL(
-          '../../../node_modules/web-tree-sitter/web-tree-sitter.wasm',
-          import.meta.url,
-        ).href,
-        language: new URL(
-          '../../../node_modules/tree-sitter-java/tree-sitter-java.wasm',
-          import.meta.url,
-        ),
+        runtime: runtimeUrl,
       });
     }
     response =

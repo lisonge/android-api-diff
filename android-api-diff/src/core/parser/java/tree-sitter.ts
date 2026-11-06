@@ -12,7 +12,7 @@ import {
 
 export interface JavaParserAssets {
   runtime: string;
-  language: string | URL;
+  language?: string | URL;
 }
 
 let initialization: Promise<Parser> | undefined;
@@ -25,7 +25,10 @@ export const initializeJavaParser = (
     );
     const language = await Language.load(
       assets?.language ??
-        new URL(import.meta.resolve('tree-sitter-java/tree-sitter-java.wasm')),
+        new URL(
+          '../../../generated/tree-sitter-java.wasm',
+          import.meta.url,
+        ),
     );
     return new Parser().setLanguage(language);
   })().catch((error) => {
