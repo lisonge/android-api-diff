@@ -59,7 +59,6 @@ const selectedOverloadDisplayLabel = computed(() => {
 });
 
 const getTagRangeDesc = (range: string[]): string => {
-  if (range.length === 1) return range[0].substring(ANDROID_PREFIX_LEN);
   let st = range[0];
   let ed = range.at(-1)!;
   const bigSt = androidVersionList.value.find((v) => v.tags[0] === st)?.version;
@@ -68,8 +67,9 @@ const getTagRangeDesc = (range: string[]): string => {
   )?.version;
   st = st.substring(ANDROID_PREFIX_LEN);
   ed = ed.substring(ANDROID_PREFIX_LEN);
+  if (bigSt && bigEd && bigSt === bigEd) return bigSt;
+  if (range.length === 1) return st;
   if (bigSt || bigEd) {
-    if (bigSt && bigEd && bigSt === bigEd) return bigSt;
     return `${bigSt ?? st} - ${bigEd ?? ed}`;
   }
   return `${st} - ${ed}`;
