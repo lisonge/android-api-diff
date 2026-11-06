@@ -1,0 +1,31 @@
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+:root {
+  --control-height: 32px;
+  --control-height-sm: 26px;
+  --control-radius: 4px;
+  --page-h: max(100vh, 700px);
+  --page-w: max(100vw, 1200px);
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+.font-github-mono {
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    SF Mono,
+    Menlo,
+    Consolas,
+    Liberation Mono,
+    monospace;
+}
+
+.hidden-scrollbar {
+  scrollbar-width: none;
+}

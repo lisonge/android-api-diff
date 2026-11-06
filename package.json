@@ -1,40 +1,36 @@
 {
-  "name": "@android-cs/android-api-diff-workspace",
-  "version": "0.0.0",
+  "name": "android-api-diff-workspace",
   "private": true,
   "type": "module",
-  "engines": {
-    "node": ">=26.5.0"
-  },
   "scripts": {
-    "type-check": "pnpm -r type-check",
-    "dev": "pnpm -F @android-cs/web dev",
-    "build": "pnpm -F @android-cs/web build",
-    "preview": "pnpm -F @android-cs/web preview",
-    "format": "prettier --cache --write --ignore-unknown ."
+    "type-check": "pnpm -r type-check && tsc -p scripts/tsconfig.json",
+    "dev": "pnpm -F android-api-diff-web dev",
+    "build": "pnpm -F android-api-diff-web build",
+    "preview": "pnpm -F android-api-diff-web preview",
+    "format": "prettier --cache --write --ignore-unknown .",
+    "test:unit": "pnpm prepare:index && node scripts/test.mjs",
+    "test": "pnpm type-check && pnpm test:unit && pnpm -F android-api-diff test:package",
+    "prepare:index": "node scripts/prepare-index.ts",
+    "upload:index": "node scripts/upload-index.ts"
   },
   "dependencies": {
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "@vitejs/plugin-legacy": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
-    "@vue/tsconfig": "catalog:",
     "@vueuse/core": "catalog:",
-    "@vueuse/router": "catalog:",
-    "antlr4": "catalog:",
     "idb": "catalog:",
     "lodash-es": "catalog:",
-    "normalize.css": "catalog:",
-    "p-limit": "catalog:",
     "prettier": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:",
-    "unocss": "catalog:",
-    "unplugin-data": "catalog:",
     "vite": "catalog:",
     "vue": "catalog:",
     "vue-router": "catalog:",
-    "vue-tsc": "catalog:"
+    "vue-tsc": "catalog:",
+    "user-attachments": "catalog:",
+    "tailwindcss": "catalog:",
+    "@tailwindcss/vite": "catalog:"
   },
   "devEngines": {
     "runtime": {
@@ -44,7 +40,7 @@
     },
     "packageManager": {
       "name": "pnpm",
-      "version": "11.7.0",
+      "version": "12.17.0",
       "onFail": "error"
     }
   }

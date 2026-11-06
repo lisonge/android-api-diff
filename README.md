@@ -2,7 +2,9 @@
 
 **<https://diff.songe.li>**
 
-An online tool to show Android Java/AIDL files api changes between different android inner versions
+Compare Android Java/AIDL APIs across versions and 24 AOSP repositories, including repository/path migrations. Search by name or select an exact repository and path.
+
+The bundled index contains audited release snapshots. Unscanned tags are shown as unknown; see [index building and CLI usage](./CLI.md#multi-repository-index) for full-tag indexing.
 
 ## CLI + Agent Skill
 
@@ -27,4 +29,4 @@ android-api-diff skill install --skill-scope global
 android-api-diff skill remove
 ```
 
-[CLI usage, Skill setup, and MCP migration guide](./CLI.md)
+[CLI usage and Skill setup](./CLI.md)

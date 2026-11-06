@@ -1,0 +1,706 @@
+[
+  {
+    "name": "declarations",
+    "source": "package test; import java.util.*; import static x.A.Inner;\n/** @hide */ public abstract class Outer<T extends Number> {\n  public static final int A=1, B=2;\n  @Nullable String first, second;\n  public Outer(@NonNull T value) {}\n  public abstract <R> R convert(T value);\n  public void run(String... values) {}\n  public void arrays(int value[], String[] values) {}\n  class Inner { Inner(Outer<T> Outer.this) {} }\n  interface Nested { int A=1, B[]= {2, 3}; @Nullable String find(@NonNull String key); }\n}",
+    "expected": {
+      "package": "test",
+      "imports": ["java.util.*"],
+      "structs": [
+        {
+          "name": "Outer",
+          "loc": 2,
+          "isAbstract": true,
+          "isHidden": true,
+          "members": [
+            {
+              "kind": "field",
+              "name": "A",
+              "type": "int",
+              "loc": 3,
+              "imports": [],
+              "isStatic": true,
+              "fieldNullability": "non-null"
+            },
+            {
+              "kind": "field",
+              "name": "B",
+              "type": "int",
+              "loc": 3,
+              "imports": [],
+              "isStatic": true,
+              "fieldNullability": "non-null"
+            },
+            {
+              "kind": "field",
+              "name": "first",
+              "type": "String",
+              "loc": 4,
+              "imports": [0],
+              "fieldNullability": "nullable"
+            },
+            {
+              "kind": "field",
+              "name": "second",
+              "type": "String",
+              "loc": 4,
+              "imports": [0],
+              "fieldNullability": "nullable"
+            },
+            {
+              "kind": "constructor",
+              "name": "Outer",
+              "type": "(T) -> Outer",
+              "loc": 5,
+              "imports": [0],
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "T",
+                  "nullability": "non-null"
+                }
+              ],
+              "parameterCount": 1
+            },
+            {
+              "kind": "method",
+              "name": "convert",
+              "type": "(T) -> R",
+              "loc": 6,
+              "imports": [0],
+              "isAbstract": true,
+              "returnType": "R",
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "T"
+                }
+              ],
+              "parameterCount": 1
+            },
+            {
+              "kind": "method",
+              "name": "run",
+              "type": "(String[]) -> void",
+              "loc": 7,
+              "imports": [],
+              "returnType": "void",
+              "returnNullability": "non-null",
+              "parameters": [
+                {
+                  "name": "values",
+                  "type": "String[]"
+                }
+              ],
+              "parameterCount": 1
+            },
+            {
+              "kind": "method",
+              "name": "arrays",
+              "type": "(int[], String[]) -> void",
+              "loc": 8,
+              "imports": [],
+              "returnType": "void",
+              "returnNullability": "non-null",
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "int[]"
+                },
+                {
+                  "name": "values",
+                  "type": "String[]"
+                }
+              ],
+              "parameterCount": 2
+            }
+          ],
+          "children": [
+            {
+              "name": "Inner",
+              "loc": 9,
+              "members": [
+                {
+                  "kind": "constructor",
+                  "name": "Inner",
+                  "type": "() -> Inner",
+                  "loc": 9,
+                  "imports": [],
+                  "parameters": [],
+                  "parameterCount": 0
+                }
+              ]
+            },
+            {
+              "name": "Nested",
+              "loc": 10,
+              "isInterface": true,
+              "members": [
+                {
+                  "kind": "constant",
+                  "initializer": "1",
+                  "name": "A",
+                  "type": "int",
+                  "loc": 10,
+                  "imports": [],
+                  "fieldNullability": "non-null"
+                },
+                {
+                  "kind": "constant",
+                  "initializer": "{2, 3}",
+                  "name": "B",
+                  "type": "int[]",
+                  "loc": 10,
+                  "imports": []
+                },
+                {
+                  "kind": "method",
+                  "name": "find",
+                  "type": "(String) -> String",
+                  "loc": 10,
+                  "imports": [0],
+                  "returnType": "String",
+                  "returnNullability": "nullable",
+                  "parameters": [
+                    {
+                      "name": "key",
+                      "type": "String",
+                      "nullability": "non-null"
+                    }
+                  ],
+                  "parameterCount": 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "types",
+    "source": "import test.Nullable; import test.NonNull; import java.util.List;\nclass Types {\n  @Nullable List<@NonNull String> names;\n  String @Nullable [] strings;\n  public <T> @NonNull T convert(@Nullable T value) { return value; }\n  public List<? extends Number> wild(List<? super String> values) { return null; }\n  void receiver(Types this, int value) {}\n  String trailing() [] { return null; }\n}",
+    "expected": {
+      "package": "",
+      "imports": ["test.Nullable", "test.NonNull", "java.util.List"],
+      "structs": [
+        {
+          "name": "Types",
+          "loc": 2,
+          "members": [
+            {
+              "kind": "field",
+              "name": "names",
+              "type": "List<@NonNullString>",
+              "loc": 3,
+              "imports": [0, 2],
+              "fieldNullability": "nullable"
+            },
+            {
+              "kind": "field",
+              "name": "strings",
+              "type": "String@Nullable[]",
+              "loc": 4,
+              "imports": [0],
+              "fieldNullability": "nullable"
+            },
+            {
+              "kind": "method",
+              "name": "convert",
+              "type": "(T) -> T",
+              "loc": 5,
+              "imports": [0, 1],
+              "returnType": "T",
+              "returnNullability": "non-null",
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "T",
+                  "nullability": "nullable"
+                }
+              ],
+              "parameterCount": 1
+            },
+            {
+              "kind": "method",
+              "name": "wild",
+              "type": "(List<?superString>) -> List<?extendsNumber>",
+              "loc": 6,
+              "imports": [2],
+              "returnType": "List<?extendsNumber>",
+              "parameters": [
+                {
+                  "name": "values",
+                  "type": "List<?superString>"
+                }
+              ],
+              "parameterCount": 1
+            },
+            {
+              "kind": "method",
+              "name": "receiver",
+              "type": "(int) -> void",
+              "loc": 7,
+              "imports": [],
+              "returnType": "void",
+              "returnNullability": "non-null",
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "int",
+                  "nullability": "non-null"
+                }
+              ],
+              "parameterCount": 1
+            },
+            {
+              "kind": "method",
+              "name": "trailing",
+              "type": "() -> String[]",
+              "loc": 8,
+              "imports": [],
+              "returnType": "String[]",
+              "parameters": [],
+              "parameterCount": 0
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "nested-types",
+    "source": "class Outer {\n  /** @hide */ void run() {\n    class Local { public int value; void run() {} }\n    Runnable r = new Runnable() { public void run() {} int value; };\n  }\n  enum Kind { A, B; int number; public int getNumber() { return number; } }\n  @interface Marker { String value(); int VALUE = 1; }\n}",
+    "expected": {
+      "package": "",
+      "imports": [],
+      "structs": [
+        {
+          "name": "Outer",
+          "loc": 1,
+          "members": [
+            {
+              "kind": "method",
+              "name": "run",
+              "type": "() -> void",
+              "loc": 2,
+              "imports": [],
+              "returnType": "void",
+              "returnNullability": "non-null",
+              "parameters": [],
+              "parameterCount": 0
+            }
+          ],
+          "children": [
+            {
+              "name": "Local",
+              "loc": 3,
+              "isHidden": true,
+              "members": [
+                {
+                  "kind": "field",
+                  "name": "value",
+                  "type": "int",
+                  "loc": 3,
+                  "imports": [],
+                  "fieldNullability": "non-null"
+                },
+                {
+                  "kind": "method",
+                  "name": "run",
+                  "type": "() -> void",
+                  "loc": 3,
+                  "imports": [],
+                  "returnType": "void",
+                  "returnNullability": "non-null",
+                  "parameters": [],
+                  "parameterCount": 0
+                }
+              ]
+            },
+            {
+              "name": "Kind",
+              "loc": 6,
+              "members": [
+                {
+                  "kind": "field",
+                  "name": "number",
+                  "type": "int",
+                  "loc": 6,
+                  "imports": [],
+                  "fieldNullability": "non-null"
+                },
+                {
+                  "kind": "method",
+                  "name": "getNumber",
+                  "type": "() -> int",
+                  "loc": 6,
+                  "imports": [],
+                  "returnType": "int",
+                  "returnNullability": "non-null",
+                  "parameters": [],
+                  "parameterCount": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "interface-constants",
+    "source": "interface Values { int HEX=0xff, SHIFT=1 << 2; String VALUE=\"a /* not a comment */ b\"; int TABLE[] = { 1, 2 }; default void run() {} static void other() {} }",
+    "expected": {
+      "package": "",
+      "imports": [],
+      "structs": [
+        {
+          "name": "Values",
+          "loc": 1,
+          "isInterface": true,
+          "members": [
+            {
+              "kind": "constant",
+              "initializer": "0xff",
+              "name": "HEX",
+              "type": "int",
+              "loc": 1,
+              "imports": [],
+              "fieldNullability": "non-null"
+            },
+            {
+              "kind": "constant",
+              "initializer": "1 << 2",
+              "name": "SHIFT",
+              "type": "int",
+              "loc": 1,
+              "imports": [],
+              "fieldNullability": "non-null"
+            },
+            {
+              "kind": "constant",
+              "initializer": "\"a /* not a comment */ b\"",
+              "name": "VALUE",
+              "type": "String",
+              "loc": 1,
+              "imports": []
+            },
+            {
+              "kind": "constant",
+              "initializer": "{ 1, 2 }",
+              "name": "TABLE",
+              "type": "int[]",
+              "loc": 1,
+              "imports": []
+            },
+            {
+              "kind": "method",
+              "name": "run",
+              "type": "() -> void",
+              "loc": 1,
+              "imports": [],
+              "returnType": "void",
+              "returnNullability": "non-null",
+              "parameters": [],
+              "parameterCount": 0
+            },
+            {
+              "kind": "method",
+              "name": "other",
+              "type": "() -> void",
+              "loc": 1,
+              "imports": [],
+              "returnType": "void",
+              "returnNullability": "non-null",
+              "parameters": [],
+              "parameterCount": 0
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "unicode",
+    "source": "package sample; // emoji: 😀 中文\n/** @hide */ class Unicode {\n String 文本 = \"😀\";\n int café;\n void 方法(String 参数) {}\n}",
+    "expected": {
+      "package": "sample",
+      "imports": [],
+      "structs": [
+        {
+          "name": "Unicode",
+          "loc": 2,
+          "isHidden": true,
+          "members": [
+            {
+              "kind": "field",
+              "name": "文本",
+              "type": "String",
+              "loc": 3,
+              "imports": []
+            },
+            {
+              "kind": "field",
+              "name": "café",
+              "type": "int",
+              "loc": 4,
+              "imports": [],
+              "fieldNullability": "non-null"
+            },
+            {
+              "kind": "method",
+              "name": "方法",
+              "type": "(String) -> void",
+              "loc": 5,
+              "imports": [],
+              "returnType": "void",
+              "returnNullability": "non-null",
+              "parameters": [
+                {
+                  "name": "参数",
+                  "type": "String"
+                }
+              ],
+              "parameterCount": 1
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "nullability",
+    "source": "\r\nimport android.annotation.NonNull;\r\nimport android.annotation.Nullable;\r\n\r\npublic abstract class Example {\r\n  @Nullable String maybeName;\r\n  @android.annotation.NonNull String sureName;\r\n  String unknownName;\r\n  int count;\r\n\r\n  /** @hide */\r\n  @Deprecated\r\n  public static String hiddenName;\r\n\r\n  Example(@NonNull String name) {}\r\n\r\n  /**\r\n   * Loads a hidden value.\r\n   *\r\n   * @hide\r\n   */\r\n  @Deprecated\r\n  String loadHiddenName() {\r\n    return \"\";\r\n  }\r\n\r\n  @Nullable String findName(@Nullable String key, @NonNull Object token) {\r\n    return null;\r\n  }\r\n\r\n  public @NonNull String strictName() {\r\n    return \"\";\r\n  }\r\n\r\n  String inferName(String key) {\r\n    return key;\r\n  }\r\n\r\n  abstract String loadName();\r\n\r\n  void setName(@Nullable String name) {}\r\n}\r\n\r\ninterface ExampleApi {\r\n  @Nullable String findName(@NonNull String key);\r\n}\r\n\r\n/** @hide */\r\n@Deprecated\r\nclass HiddenExample {}\r\n",
+    "expected": {
+      "package": "",
+      "imports": ["android.annotation.NonNull", "android.annotation.Nullable"],
+      "structs": [
+        {
+          "name": "Example",
+          "loc": 5,
+          "isAbstract": true,
+          "members": [
+            {
+              "kind": "field",
+              "name": "maybeName",
+              "type": "String",
+              "loc": 6,
+              "imports": [1],
+              "fieldNullability": "nullable"
+            },
+            {
+              "kind": "field",
+              "name": "sureName",
+              "type": "String",
+              "loc": 7,
+              "imports": [],
+              "fieldNullability": "non-null"
+            },
+            {
+              "kind": "field",
+              "name": "unknownName",
+              "type": "String",
+              "loc": 8,
+              "imports": []
+            },
+            {
+              "kind": "field",
+              "name": "count",
+              "type": "int",
+              "loc": 9,
+              "imports": [],
+              "fieldNullability": "non-null"
+            },
+            {
+              "kind": "field",
+              "name": "hiddenName",
+              "type": "String",
+              "loc": 13,
+              "imports": [],
+              "isStatic": true
+            },
+            {
+              "kind": "constructor",
+              "name": "Example",
+              "type": "(String) -> Example",
+              "loc": 15,
+              "imports": [0],
+              "parameters": [
+                {
+                  "name": "name",
+                  "type": "String",
+                  "nullability": "non-null"
+                }
+              ],
+              "parameterCount": 1
+            },
+            {
+              "kind": "method",
+              "name": "loadHiddenName",
+              "type": "() -> String",
+              "loc": 23,
+              "imports": [],
+              "returnType": "String",
+              "parameters": [],
+              "parameterCount": 0
+            },
+            {
+              "kind": "method",
+              "name": "findName",
+              "type": "(String, Object) -> String",
+              "loc": 27,
+              "imports": [0, 1],
+              "returnType": "String",
+              "returnNullability": "nullable",
+              "parameters": [
+                {
+                  "name": "key",
+                  "type": "String",
+                  "nullability": "nullable"
+                },
+                {
+                  "name": "token",
+                  "type": "Object",
+                  "nullability": "non-null"
+                }
+              ],
+              "parameterCount": 2
+            },
+            {
+              "kind": "method",
+              "name": "strictName",
+              "type": "() -> String",
+              "loc": 31,
+              "imports": [0],
+              "returnType": "String",
+              "returnNullability": "non-null",
+              "parameters": [],
+              "parameterCount": 0
+            },
+            {
+              "kind": "method",
+              "name": "inferName",
+              "type": "(String) -> String",
+              "loc": 35,
+              "imports": [],
+              "returnType": "String",
+              "parameters": [
+                {
+                  "name": "key",
+                  "type": "String"
+                }
+              ],
+              "parameterCount": 1
+            },
+            {
+              "kind": "method",
+              "name": "loadName",
+              "type": "() -> String",
+              "loc": 39,
+              "imports": [],
+              "isAbstract": true,
+              "returnType": "String",
+              "parameters": [],
+              "parameterCount": 0
+            },
+            {
+              "kind": "method",
+              "name": "setName",
+              "type": "(String) -> void",
+              "loc": 41,
+              "imports": [1],
+              "returnType": "void",
+              "returnNullability": "non-null",
+              "parameters": [
+                {
+                  "name": "name",
+                  "type": "String",
+                  "nullability": "nullable"
+                }
+              ],
+              "parameterCount": 1
+            }
+          ]
+        },
+        {
+          "name": "ExampleApi",
+          "loc": 44,
+          "isInterface": true,
+          "members": [
+            {
+              "kind": "method",
+              "name": "findName",
+              "type": "(String) -> String",
+              "loc": 45,
+              "imports": [0, 1],
+              "returnType": "String",
+              "returnNullability": "nullable",
+              "parameters": [
+                {
+                  "name": "key",
+                  "type": "String",
+                  "nullability": "non-null"
+                }
+              ],
+              "parameterCount": 1
+            }
+          ]
+        },
+        {
+          "name": "HiddenExample",
+          "loc": 50,
+          "isHidden": true,
+          "members": []
+        }
+      ]
+    }
+  },
+  {
+    "name": "imports",
+    "source": "\r\npackage sample.api;\r\n\r\nimport java.util.List;\r\nimport sample.model.A;\r\nimport sample.model.Unused;\r\nimport static sample.model.Container.Nested;\r\nimport sample.wildcard.*;\r\n\r\nclass ImportExample {\r\n  public static final A DEFAULT = null;\r\n\r\n  List<A> load(Nested nested, WildType value) {\r\n    return null;\r\n  }\r\n}\r\n",
+    "expected": {
+      "package": "sample.api",
+      "imports": [
+        "java.util.List",
+        "sample.model.A",
+        "static sample.model.Container.Nested",
+        "sample.wildcard.*"
+      ],
+      "structs": [
+        {
+          "name": "ImportExample",
+          "loc": 10,
+          "members": [
+            {
+              "kind": "field",
+              "name": "DEFAULT",
+              "type": "A",
+              "loc": 11,
+              "imports": [1],
+              "isStatic": true
+            },
+            {
+              "kind": "method",
+              "name": "load",
+              "type": "(Nested, WildType) -> List<A>",
+              "loc": 13,
+              "imports": [0, 1, 2, 3],
+              "returnType": "List<A>",
+              "parameters": [
+                {
+                  "name": "nested",
+                  "type": "Nested"
+                },
+                {
+                  "name": "value",
+                  "type": "WildType"
+                }
+              ],
+              "parameterCount": 2
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

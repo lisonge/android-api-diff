@@ -1,0 +1,161 @@
+{
+  "repositories": [
+    {
+      "repo": "platform/frameworks/base",
+      "includePrefixes": [
+        "core/java/",
+        "drm/java/",
+        "graphics/java/",
+        "identity/java/",
+        "keystore/java/",
+        "location/java/",
+        "location/lib/java/",
+        "lowpan/java/",
+        "media/java/",
+        "media/aidl/",
+        "media/apex/",
+        "mime/java/",
+        "mms/java/",
+        "nfc/java/",
+        "nfc-extras/java/",
+        "nfc-non-updatable/java/",
+        "omapi/java/",
+        "opengl/java/",
+        "rs/java/",
+        "sax/java/",
+        "telecomm/java/",
+        "telephony/java/",
+        "vr/java/",
+        "wifi/java/",
+        "apex/",
+        "services/",
+        "libs/appfunctions/java/"
+      ]
+    },
+    {
+      "repo": "platform/frameworks/opt/telephony",
+      "includePrefixes": ["src/java/"]
+    },
+    {
+      "repo": "platform/frameworks/opt/net/ims",
+      "includePrefixes": ["src/java/"]
+    },
+    {
+      "repo": "platform/packages/modules/Connectivity",
+      "includePrefixes": [
+        "framework/src/",
+        "framework/aidl-export/",
+        "framework-t/src/",
+        "core/java/",
+        "nearby/framework/",
+        "thread/framework/",
+        "remoteauth/framework/",
+        "networksecurity/framework/",
+        "Vcn/framework-b/",
+        "Tethering/common/TetheringLib/",
+        "Tethering/src/android/",
+        "staticlibs/framework/"
+      ]
+    },
+    {
+      "repo": "platform/packages/modules/Wifi",
+      "includePrefixes": ["framework/java/", "framework/aidl-export/"]
+    },
+    {
+      "repo": "platform/packages/modules/Bluetooth",
+      "includePrefixes": ["framework/java/", "framework/aidl-export/"]
+    },
+    {
+      "repo": "platform/packages/modules/Permission",
+      "includePrefixes": ["framework/java/", "framework-s/java/"]
+    },
+    {
+      "repo": "platform/packages/modules/Media",
+      "includePrefixes": [
+        "apex/framework/",
+        "apex/aidl/",
+        "mediametrics/media_metrics/aidl/"
+      ]
+    },
+    {
+      "repo": "platform/packages/modules/AppSearch",
+      "includePrefixes": ["framework/java/"]
+    },
+    {
+      "repo": "platform/packages/modules/AdServices",
+      "includePrefixes": ["adservices/framework/", "sdksandbox/framework/"]
+    },
+    {
+      "repo": "platform/packages/modules/OnDevicePersonalization",
+      "includePrefixes": ["framework/java/"]
+    },
+    {
+      "repo": "platform/packages/modules/HealthFitness",
+      "includePrefixes": ["framework/java/"]
+    },
+    {
+      "repo": "platform/packages/modules/Uwb",
+      "includePrefixes": ["framework/java/", "ranging/framework/"]
+    },
+    {
+      "repo": "platform/packages/modules/ConfigInfrastructure",
+      "includePrefixes": ["framework/java/"]
+    },
+    {
+      "repo": "platform/packages/modules/Scheduling",
+      "includePrefixes": ["framework/java/"]
+    },
+    {
+      "repo": "platform/packages/modules/StatsD",
+      "includePrefixes": ["framework/java/", "aidl/"]
+    },
+    {
+      "repo": "platform/packages/modules/SdkExtensions",
+      "includePrefixes": ["framework/java/", "java/android/os/ext/"]
+    },
+    {
+      "repo": "platform/packages/modules/IPsec",
+      "includePrefixes": ["src/java/"]
+    },
+    {
+      "repo": "platform/packages/modules/Virtualization",
+      "includePrefixes": [
+        "javalib/src/",
+        "java/framework/src/",
+        "libs/framework-virtualization/src/",
+        "virtualizationservice/aidl/",
+        "android/virtualizationservice/aidl/",
+        "virtmanager/aidl/"
+      ]
+    },
+    {
+      "repo": "platform/packages/modules/Profiling",
+      "includePrefixes": ["framework/java/", "aidl/"]
+    },
+    {
+      "repo": "platform/packages/modules/CrashRecovery",
+      "includePrefixes": ["framework/java/android/"]
+    },
+    {
+      "repo": "platform/packages/modules/NetworkStack",
+      "includePrefixes": ["src/android/net/", "common/networkstackclient/src/"]
+    },
+    {
+      "repo": "platform/packages/modules/DnsResolver",
+      "includePrefixes": ["binder/"]
+    },
+    {
+      "repo": "platform/packages/providers/MediaProvider",
+      "includePrefixes": [
+        "apex/framework/",
+        "pdf/framework/",
+        "pdf/framework-v/",
+        "photopicker/framework/"
+      ]
+    }
+  ],
+  "excludedDirectories": {
+    "pattern": "(^|\\/)(tests?|testing|[^/]*tests|testutils|testapps|test-apps|test_app|test_apk|samples?|demos?|demoapp|benchmarks?|cts|vts|fuzzers?|fuzz|fakes|aidl_api)(\\/|$)",
+    "flags": "i"
+  }
+}

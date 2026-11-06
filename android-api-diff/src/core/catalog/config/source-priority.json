@@ -1,0 +1,7 @@
+{
+  "order": ["extension", "repository", "path"],
+  "extensions": [".java", ".aidl"],
+  "repositories": ["platform/frameworks/base"],
+  "pathPrefixes": ["core/java/", "framework/src/", "framework/java/"],
+  "deprioritizedPathSegments": ["/aidl-export/"]
+}

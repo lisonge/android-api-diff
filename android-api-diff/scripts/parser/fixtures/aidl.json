@@ -1,0 +1,442 @@
+[
+  {
+    "source": "package sample;\nimport other.Payload;\n@Descriptor(value=\"sample.IService\") oneway interface IService {\n  @nullable Payload load(in @nullable Payload key, out int[] values) = 7;\n  void load(in List<List<Payload>> values);\n  @EnforcePermission(\"ACCESS_NETWORK_STATE\") oneway void notify(in Map<String,List<Payload>> values);\n  const int SHIFT = (1 << 4) >> 1;\n}",
+    "expected": {
+      "package": "sample",
+      "imports": ["other.Payload"],
+      "structs": [
+        {
+          "name": "IService",
+          "loc": 3,
+          "isInterface": true,
+          "isHidden": true,
+          "members": [
+            {
+              "kind": "method",
+              "name": "load",
+              "type": "(Payload, int[]) -> Payload",
+              "loc": 4,
+              "imports": [0],
+              "returnType": "Payload",
+              "returnNullability": "nullable",
+              "parameters": [
+                {
+                  "name": "key",
+                  "type": "Payload",
+                  "nullability": "nullable"
+                },
+                {
+                  "name": "values",
+                  "type": "int[]"
+                }
+              ],
+              "parameterCount": 2
+            },
+            {
+              "kind": "method",
+              "name": "load",
+              "type": "(List<List<Payload>>) -> void",
+              "loc": 5,
+              "imports": [0],
+              "returnType": "void",
+              "parameters": [
+                {
+                  "name": "values",
+                  "type": "List<List<Payload>>"
+                }
+              ],
+              "parameterCount": 1
+            },
+            {
+              "kind": "method",
+              "name": "notify",
+              "type": "(Map<String,List<Payload>>) -> void",
+              "loc": 6,
+              "imports": [0],
+              "returnType": "void",
+              "parameters": [
+                {
+                  "name": "values",
+                  "type": "Map<String,List<Payload>>"
+                }
+              ],
+              "parameterCount": 1
+            },
+            {
+              "kind": "constant",
+              "initializer": "(1 << 4) >> 1",
+              "name": "SHIFT",
+              "type": "int",
+              "loc": 7,
+              "imports": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "source": "package sample;\nparcelable Container<T> {\n  const @utf8InCpp String LABEL = \"hello\";\n  int[2][3] matrix = {{1,2,3}, {4,5,6}};\n  @nullable T value;\n  union Choice { int number; String text; const int KIND = 1; }\n  @Backing(type=\"long\") enum Status { FIRST, SECOND = 4L, THIRD, }\n  interface Callback { void done(); }\n  int after;\n}",
+    "expected": {
+      "package": "sample",
+      "imports": [],
+      "structs": [
+        {
+          "name": "Container",
+          "loc": 2,
+          "isHidden": true,
+          "members": [
+            {
+              "kind": "constant",
+              "initializer": "\"hello\"",
+              "name": "LABEL",
+              "type": "String",
+              "loc": 3,
+              "imports": []
+            },
+            {
+              "kind": "field",
+              "name": "matrix",
+              "type": "int[][]",
+              "loc": 4,
+              "imports": []
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": "T",
+              "loc": 5,
+              "imports": [],
+              "fieldNullability": "nullable"
+            },
+            {
+              "kind": "field",
+              "name": "after",
+              "type": "int",
+              "loc": 9,
+              "imports": []
+            }
+          ],
+          "children": [
+            {
+              "name": "Choice",
+              "loc": 6,
+              "isHidden": true,
+              "members": [
+                {
+                  "kind": "field",
+                  "name": "number",
+                  "type": "int",
+                  "loc": 6,
+                  "imports": []
+                },
+                {
+                  "kind": "field",
+                  "name": "text",
+                  "type": "String",
+                  "loc": 6,
+                  "imports": []
+                },
+                {
+                  "kind": "constant",
+                  "initializer": "1",
+                  "name": "KIND",
+                  "type": "int",
+                  "loc": 6,
+                  "imports": []
+                }
+              ]
+            },
+            {
+              "name": "Status",
+              "loc": 7,
+              "isInterface": true,
+              "isHidden": true,
+              "members": [
+                {
+                  "kind": "constant",
+                  "name": "FIRST",
+                  "type": "long",
+                  "loc": 7,
+                  "imports": [],
+                  "initializer": "0"
+                },
+                {
+                  "kind": "constant",
+                  "name": "SECOND",
+                  "type": "long",
+                  "loc": 7,
+                  "imports": [],
+                  "initializer": "4L"
+                },
+                {
+                  "kind": "constant",
+                  "name": "THIRD",
+                  "type": "long",
+                  "loc": 7,
+                  "imports": [],
+                  "initializer": "SECOND + 1"
+                }
+              ]
+            },
+            {
+              "name": "Callback",
+              "loc": 8,
+              "isInterface": true,
+              "isHidden": true,
+              "members": [
+                {
+                  "kind": "method",
+                  "name": "done",
+                  "type": "() -> void",
+                  "loc": 8,
+                  "imports": [],
+                  "returnType": "void",
+                  "parameters": [],
+                  "parameterCount": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "source": "parcelable outer.Value<T> cpp_header \"value.h\" ndk_header \"value_ndk.h\" rust_type \"crate::Value\";\ninterface IForward;\n@JavaDerive(equals=true, toString=true) parcelable Data {\n  int[] empty = {};\n  int cpp_header;\n  @nullable(heap=true) String value;\n  @SuppressWarnings(value={\"a\", \"b\"}) String description;\n}",
+    "expected": {
+      "package": "",
+      "imports": [],
+      "structs": [
+        {
+          "name": "Value",
+          "loc": 1,
+          "isHidden": true,
+          "members": []
+        },
+        {
+          "name": "IForward",
+          "loc": 2,
+          "isInterface": true,
+          "isHidden": true,
+          "members": []
+        },
+        {
+          "name": "Data",
+          "loc": 3,
+          "isHidden": true,
+          "members": [
+            {
+              "kind": "field",
+              "name": "empty",
+              "type": "int[]",
+              "loc": 4,
+              "imports": []
+            },
+            {
+              "kind": "field",
+              "name": "cpp_header",
+              "type": "int",
+              "loc": 5,
+              "imports": []
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": "String",
+              "loc": 6,
+              "imports": [],
+              "fieldNullability": "nullable"
+            },
+            {
+              "kind": "field",
+              "name": "description",
+              "type": "String",
+              "loc": 7,
+              "imports": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "source": "interface Constants {\n    const long LIMIT = 0x7fffffffffffffffL;\n    const byte NEGATIVE = 0xffu8;\n    const float FRACTION = 1.5e-2f;\n    const String TEXT = \"0xffu8\";\n    const boolean CHECK = (1 + 2 * 3 == 7) && !false;\n  }",
+    "expected": {
+      "package": "",
+      "imports": [],
+      "structs": [
+        {
+          "name": "Constants",
+          "loc": 1,
+          "isInterface": true,
+          "isHidden": true,
+          "members": [
+            {
+              "kind": "constant",
+              "initializer": "0x7fffffffffffffffL",
+              "name": "LIMIT",
+              "type": "long",
+              "loc": 2,
+              "imports": []
+            },
+            {
+              "kind": "constant",
+              "initializer": "(-1)",
+              "name": "NEGATIVE",
+              "type": "byte",
+              "loc": 3,
+              "imports": []
+            },
+            {
+              "kind": "constant",
+              "initializer": "1.5e-2f",
+              "name": "FRACTION",
+              "type": "float",
+              "loc": 4,
+              "imports": []
+            },
+            {
+              "kind": "constant",
+              "initializer": "\"0xffu8\"",
+              "name": "TEXT",
+              "type": "String",
+              "loc": 5,
+              "imports": []
+            },
+            {
+              "kind": "constant",
+              "initializer": "(1 + 2 * 3 == 7) && !false",
+              "name": "CHECK",
+              "type": "boolean",
+              "loc": 6,
+              "imports": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "source": "\npackage android.app;\n\ninterface IExample {\n  @nullable String findName(@nullable String key, int count);\n  String requiredName(String key);\n  const String KIND = \"kind\";\n}\n\nparcelable ExampleParcelable {\n  @nullable String maybeName;\n  String sureName;\n  int count;\n}\n",
+    "expected": {
+      "package": "android.app",
+      "imports": [],
+      "structs": [
+        {
+          "name": "IExample",
+          "loc": 4,
+          "isInterface": true,
+          "isHidden": true,
+          "members": [
+            {
+              "kind": "method",
+              "name": "findName",
+              "type": "(String, int) -> String",
+              "loc": 5,
+              "imports": [],
+              "returnType": "String",
+              "returnNullability": "nullable",
+              "parameters": [
+                {
+                  "name": "key",
+                  "type": "String",
+                  "nullability": "nullable"
+                },
+                {
+                  "name": "count",
+                  "type": "int"
+                }
+              ],
+              "parameterCount": 2
+            },
+            {
+              "kind": "method",
+              "name": "requiredName",
+              "type": "(String) -> String",
+              "loc": 6,
+              "imports": [],
+              "returnType": "String",
+              "parameters": [
+                {
+                  "name": "key",
+                  "type": "String"
+                }
+              ],
+              "parameterCount": 1
+            },
+            {
+              "kind": "constant",
+              "initializer": "\"kind\"",
+              "name": "KIND",
+              "type": "String",
+              "loc": 7,
+              "imports": []
+            }
+          ]
+        },
+        {
+          "name": "ExampleParcelable",
+          "loc": 10,
+          "isHidden": true,
+          "members": [
+            {
+              "kind": "field",
+              "name": "maybeName",
+              "type": "String",
+              "loc": 11,
+              "imports": [],
+              "fieldNullability": "nullable"
+            },
+            {
+              "kind": "field",
+              "name": "sureName",
+              "type": "String",
+              "loc": 12,
+              "imports": []
+            },
+            {
+              "kind": "field",
+              "name": "count",
+              "type": "int",
+              "loc": 13,
+              "imports": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "source": "\npackage sample.api;\n\nimport sample.model.A;\nimport sample.model.Unused;\n\ninterface IImportExample {\n  List<A> load(A value);\n}\n",
+    "expected": {
+      "package": "sample.api",
+      "imports": ["sample.model.A"],
+      "structs": [
+        {
+          "name": "IImportExample",
+          "loc": 7,
+          "isInterface": true,
+          "isHidden": true,
+          "members": [
+            {
+              "kind": "method",
+              "name": "load",
+              "type": "(A) -> List<A>",
+              "loc": 8,
+              "imports": [0],
+              "returnType": "List<A>",
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": "A"
+                }
+              ],
+              "parameterCount": 1
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

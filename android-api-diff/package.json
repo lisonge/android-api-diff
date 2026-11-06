@@ -1,6 +1,6 @@
 {
   "name": "android-api-diff",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Inspect Android framework API changes and generate hidden-API Java code",
   "type": "module",
   "keywords": [
@@ -12,7 +12,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/android-cs/android-api-diff",
+    "url": "https://github.com/lisonge/android-api-diff",
     "directory": "android-api-diff"
   },
   "engines": {
@@ -22,26 +22,46 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/",
     "bin": {
-      "android-api-diff": "./dist/index.js"
+      "android-api-diff": "./dist/cli.js"
+    },
+    "exports": {
+      ".": "./dist/index.js"
     }
   },
   "files": [
     "dist"
   ],
   "bin": {
-    "android-api-diff": "./src/index.ts"
+    "android-api-diff": "./src/cli/index.ts"
   },
   "scripts": {
-    "build": "tsdown",
-    "prepublishOnly": "tsdown",
-    "start": "node src/index.ts",
-    "test:cli": "node --test src/cli.test.ts",
-    "test:cache": "node --test src/nodeRuntime.test.ts src/nodeNetwork.test.ts",
-    "type-check": "tsc"
+    "build": "pnpm prepare:index && tsdown",
+    "prepublishOnly": "pnpm build",
+    "start": "pnpm prepare:index && node src/cli/index.ts",
+    "test:cli": "node --test src/cli/cli.test.ts",
+    "test:cache": "node --test src/node/nodeRuntime.test.ts src/node/nodeNetwork.test.ts",
+    "type-check": "tsc",
+    "test:code-render": "node scripts/code-render.test.ts",
+    "test:query": "node scripts/query.test.ts",
+    "build:index": "node scripts/build-index.ts",
+    "test:index": "pnpm prepare:index && node --test scripts/source-index.test.ts",
+    "test:nullability": "node scripts/parser/nullability.test.ts",
+    "test:constant-expression": "node --test scripts/parser/constant-expression.test.ts scripts/parser/constant-expression-regression.test.ts",
+    "test:aidl": "node --test scripts/parser/aidl.test.ts",
+    "test:java": "node --test scripts/parser/java-regression.test.ts",
+    "bench:java": "node scripts/parser/java-benchmark.ts",
+    "test:parser": "node --test scripts/parser/nullability.test.ts scripts/parser/constant-expression.test.ts scripts/parser/constant-expression-regression.test.ts scripts/parser/aidl.test.ts scripts/parser/java-regression.test.ts",
+    "test:package": "pnpm build && node --test scripts/package.test.ts",
+    "prepare:index": "node ../scripts/prepare-index.ts"
   },
   "dependencies": {
-    "@android-cs/api-query": "workspace:*",
     "p-limit": "catalog:",
-    "skills": "catalog:"
+    "skills": "catalog:",
+    "tree-sitter-java": "catalog:",
+    "web-tree-sitter": "catalog:",
+    "aidl-parser": "catalog:"
+  },
+  "exports": {
+    ".": "./src/core/index.ts"
   }
 }

@@ -1,36 +1,37 @@
 packages:
   - android-api-diff
-  - api-parser
-  - api-query
-  - web
+  - android-api-diff-web
 
 catalog:
   '@types/lodash-es': ^4.17.12
   '@types/node': ^26.1.1
   '@vitejs/plugin-legacy': ^8.0.2
   '@vitejs/plugin-vue': ^6.0.7
-  '@vue/tsconfig': ^0.9.1
   '@vueuse/core': ^14.3.0
-  '@vueuse/router': ^14.3.0
-  antlr4: ^4.13.2
+  aidl-parser: 0.2.0
   idb: ^8.0.3
   lodash-es: ^4.18.1
-  normalize.css: ^8.0.1
   p-limit: ^7.3.0
   prettier: ^3.8.4
   skills: ^1.5.20
+  tree-sitter-java: 0.23.5
   tsdown: 0.22.7
   typescript: ^6.0.3
-  unocss: ^66.7.2
-  unplugin-data: ^0.1.1
+  user-attachments: ^2.0.2
+  tailwindcss: ^4.3.3
+  '@tailwindcss/vite': ^4.3.3
   vite: ^8.0.16
   vue: ^3.5.38
   vue-router: ^5.1.0
   vue-tsc: ^3.3.5
+  web-tree-sitter: 0.27.1
 
 catalogMode: strict
 cleanupUnusedCatalogs: true
 
 allowBuilds:
+  tree-sitter-java: false
   core-js: true
   esbuild: true
+minimumReleaseAgeExclude:
+  - aidl-parser@0.2.0

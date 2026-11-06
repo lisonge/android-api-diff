@@ -13,22 +13,13 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v6
-        with:
-          node-version-file: package.json
-          package-manager-cache: false
-
-      - uses: pnpm/action-setup@v6
-        with:
-          version: 11.7.0
+      - uses: pnpm/setup@v3
 
       - run: pnpm install --frozen-lockfile
 
       - run: |
-          pnpm -F @android-cs/api-parser publish --no-git-checks --provenance
-          pnpm -F @android-cs/api-query publish --no-git-checks --provenance
           pnpm -F android-api-diff publish --no-git-checks --provenance
 
       - run: gh release create "$GITHUB_REF_NAME" --title "Release $GITHUB_REF_NAME" --notes-file CHANGELOG.md
