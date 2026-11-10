@@ -16,7 +16,7 @@ import {
   indexVersions,
   type SourceLocation,
 } from 'android-api-diff';
-import { createSharedComposable } from '@vueuse/core';
+import { createSharedComposable, useTimeoutFn } from '@vueuse/core';
 import { computed, onUnmounted, watch } from 'vue';
 import {
   useSearchState,
@@ -96,11 +96,17 @@ export const useSharedHomeState = createSharedComposable(() => {
   const { selectedOverloadKey } = display;
   const stopDiff = task.stop;
   onUnmounted(stopDiff);
+  const { start: scheduleMemoryDiff, stop: cancelMemoryDiff } = useTimeoutFn(
+    runMemoryDiff,
+    250,
+    { immediate: false },
+  );
   const handleDiff = {
     get loading() {
       return task.loading.value;
     },
     async invoke() {
+      cancelMemoryDiff();
       selectedOverloadKey.value = null;
       if (!isValidSearchRef.value) {
         task.reset();
@@ -115,21 +121,29 @@ export const useSharedHomeState = createSharedComposable(() => {
       });
     },
   };
+  function runMemoryDiff() {
+    if (
+      sourceIndex.value &&
+      canSearchFromMemory(
+        sourceIndex.value,
+        searchRef.value,
+        minSdk.value,
+        browserStructCache.peek,
+      )
+    ) {
+      void handleDiff.invoke();
+    }
+  }
   watch(
     [input, minSdk],
-    () => {
+    ([currentInput], [previousInput]) => {
       task.reset();
       selectedOverloadKey.value = null;
-      if (
-        sourceIndex.value &&
-        canSearchFromMemory(
-          sourceIndex.value,
-          searchRef.value,
-          minSdk.value,
-          browserStructCache.peek,
-        )
-      ) {
-        void handleDiff.invoke();
+      if (currentInput !== previousInput) {
+        scheduleMemoryDiff();
+      } else {
+        cancelMemoryDiff();
+        runMemoryDiff();
       }
     },
     { flush: 'sync' },
