@@ -16,6 +16,8 @@
     "upload:index": "node scripts/upload-index.ts"
   },
   "dependencies": {
+    "android-api-diff": "workspace:*",
+    "web-tree-sitter": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "@vitejs/plugin-legacy": "catalog:",

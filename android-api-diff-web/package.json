@@ -11,9 +11,5 @@
     "test:query": "node --test scripts/queryView.test.ts",
     "test:parser-worker": "node --test scripts/parserWorker.test.ts",
     "prepare:index": "node ../scripts/prepare-index.ts"
-  },
-  "dependencies": {
-    "android-api-diff": "workspace:*",
-    "web-tree-sitter": "catalog:"
   }
 }

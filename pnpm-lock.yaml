@@ -253,6 +253,9 @@ importers:
       '@vueuse/core':
         specifier: 'catalog:'
         version: 14.3.0(vue@3.5.38(typescript@6.0.3))
+      android-api-diff:
+        specifier: workspace:*
+        version: link:android-api-diff
       idb:
         specifier: 'catalog:'
         version: 8.0.3
@@ -286,6 +289,9 @@ importers:
       vue-tsc:
         specifier: 'catalog:'
         version: 3.3.5(typescript@6.0.3)
+      web-tree-sitter:
+        specifier: 'catalog:'
+        version: 0.27.1
     devDependencies:
       tree-sitter-java:
         specifier: 'catalog:'
@@ -306,14 +312,7 @@ importers:
         specifier: 'catalog:'
         version: 0.27.1
 
-  android-api-diff-web:
-    dependencies:
-      android-api-diff:
-        specifier: workspace:*
-        version: link:../android-api-diff
-      web-tree-sitter:
-        specifier: 'catalog:'
-        version: 0.27.1
+  android-api-diff-web: {}
 
 packages:
 
