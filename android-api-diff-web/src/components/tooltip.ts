@@ -1,4 +1,4 @@
-import { h, render, type ObjectDirective } from 'vue';
+import { defineComponent, h, render, type ObjectDirective } from 'vue';
 import MTooltip from './MTooltip.vue';
 import type { MTooltipOptions, MTooltipValue } from './MTooltip.types.ts';
 
@@ -10,6 +10,22 @@ const createTooltip = (element: HTMLElement) => {
   let hovered = false;
   let revision = 0;
 
+  // Create the ref inside a component render function so Vue has a ref owner.
+  const TooltipHost = defineComponent({
+    inheritAttrs: false,
+    setup(_, { attrs }) {
+      return () =>
+        h(MTooltip, {
+          ...(attrs as unknown as MTooltipOptions),
+          target: element,
+          manual: true,
+          ref: (value) => {
+            instance = (value as InstanceType<typeof MTooltip> | null) ?? undefined;
+          },
+        });
+    },
+  });
+
   const unmount = () => {
     if (!host) return;
     render(null, host);
@@ -19,17 +35,7 @@ const createTooltip = (element: HTMLElement) => {
   };
   const renderTooltip = () => {
     if (!host || !options) return;
-    render(
-      h(MTooltip, {
-        ...options,
-        target: element,
-        manual: true,
-        ref: (value) => {
-          instance = value as InstanceType<typeof MTooltip> | undefined;
-        },
-      }),
-      host,
-    );
+    render(h(TooltipHost, { ...options }), host);
   };
   const hide = async () => {
     hovered = false;
