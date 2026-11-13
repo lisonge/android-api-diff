@@ -1,0 +1,1 @@
+import{n as e,t}from"./tree-sitter-C9N4aOMQ.js";export{t as initializeJavaParser,e as parseJavaFile};

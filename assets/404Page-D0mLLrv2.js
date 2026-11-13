@@ -1,0 +1,2 @@
+import{T as e,c as t,d as n,t as r}from"./_plugin-vue_export-helper-D4HYbIQj.js";var i={},a={class:`flex flex-col items-center pt-[120px] gap-[16px]`};function o(r,i){return e(),n(`div`,a,[...i[0]||=[t(`div`,null,`404 Not Found`,-1),t(`a`,{class:`px-[4px] rounded-md border border-gray-300 text-gray-600 hover:text-[rgb(from_currentColor_r_g_b_/_50%)] hover:bg-gray-100`,href:`/`},` Home `,-1)]])}var s=r(i,[[`render`,o]]);export{s as default};
+//# sourceMappingURL=404Page-D0mLLrv2.js.map
