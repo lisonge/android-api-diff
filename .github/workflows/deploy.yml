@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: '26'
 
-      - name: Initialize deployment timestamp
+      - name: Initialize CDN tag
         run: node scripts/deploy.ts init
 
       - uses: pnpm/setup@v3
@@ -36,7 +36,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish build as an orphan branch
+      - name: Publish build to the CDN tag
         run: node scripts/deploy.ts publish
 
       - uses: nwtgck/actions-netlify@v4

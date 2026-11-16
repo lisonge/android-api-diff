@@ -35,24 +35,24 @@ android-api-diff skill remove
 
 The Web package is private and does not publish to npm. Run `pnpm build` and
 `pnpm preview` for local hosting. Set `CDN_BASE` when running `pnpm build` to use
-a CDN, such as `https://cdn.jsdelivr.net/gh/lisonge/android-api-diff@page-<timestamp>/`.
+a CDN, such as `https://cdn.jsdelivr.net/gh/lisonge/android-api-diff@0.0.0-page.<timestamp>/`.
 `renderBuiltUrl` rewrites built asset URLs when `CDN_BASE` has a value; otherwise
 Vite uses its default asset URLs. The router uses Vite's `BASE_URL`, independently
 of the CDN resource URLs.
 
 The deployment workflow runs on `main` and calls `Date.now()` once at the start
-to generate `page-<timestamp>`. It shares the branch name and CDN base through
-`GITHUB_ENV`, publishes the contents of `dist` at the root of that orphan branch,
-and immediately deploys the matching site to Netlify after the push succeeds.
+to generate the SemVer tag `0.0.0-page.<timestamp>`. It shares the tag and CDN
+base through `GITHUB_ENV`, tags a parentless commit containing the contents of
+`dist`, and deploys the matching site to Netlify after the push succeeds.
 Every run builds a new version. Production deployments run serially.
 Page routes remain rooted at `/`.
 
 After a successful deployment, cleanup keeps the current build plus the two
-most recent other builds by the numeric timestamp in the branch name, and
-deletes older branches matching `page-<digits>`. Failed deployments do not clean
-up branches. Each build commit has no parent, so retained branches do not retain
-the entire build history. Deleting branches makes old commits eligible for
-GitHub's garbage collection; it does not immediately shrink remote storage.
+most recent other builds by numeric timestamp. It counts CDN tags matching
+`0.0.0-page.<digits>` and legacy branches matching `page-<digits>` together.
+Cleanup runs after Netlify deploys successfully. Each retained tag points to a
+single build commit. Deleting old refs makes their commits eligible for GitHub's
+garbage collection.
 Old tabs and Netlify rollbacks outside the retained versions may lose access to
 their CDN assets; CDN caches are not a substitute for retaining an origin.
 

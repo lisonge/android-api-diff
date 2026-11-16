@@ -12,16 +12,16 @@ const git = (args: string[], env = process.env) =>
   }).trim();
 
 const initialize = async () => {
-  const branch = `page-${Date.now()}`;
-  const base = `https://cdn.jsdelivr.net/gh/${process.env.GITHUB_REPOSITORY}@${branch}/`;
+  const tag = `0.0.0-page.${Date.now()}`;
+  const base = `https://cdn.jsdelivr.net/gh/${process.env.GITHUB_REPOSITORY}@${tag}/`;
   await appendFile(
     process.env.GITHUB_ENV!,
-    `PAGES_BRANCH=${branch}\nCDN_BASE=${base}\n`,
+    `PAGES_TAG=${tag}\nCDN_BASE=${base}\n`,
   );
 };
 
 const publish = () => {
-  const branch = process.env.PAGES_BRANCH!;
+  const tag = process.env.PAGES_TAG!;
   const env = {
     ...process.env,
     GIT_INDEX_FILE: resolve(process.env.RUNNER_TEMP!, 'pages-index'),
@@ -34,20 +34,27 @@ const publish = () => {
   git(['read-tree', '--empty'], env);
   git([`--work-tree=${dist}`, 'add', '--all'], env);
   const tree = git(['write-tree'], env);
-  const commit = git(['commit-tree', tree, '-m', `Build ${branch}`], env);
-  git(['push', 'origin', `${commit}:refs/heads/${branch}`]);
+  const commit = git(['commit-tree', tree, '-m', `Build ${tag}`], env);
+  git(['push', 'origin', `${commit}:refs/tags/${tag}`]);
 };
 
 const cleanup = () => {
-  const refs = git(['ls-remote', '--heads', 'origin', 'refs/heads/page-*']);
-  const branches = Array.from(
-    refs.matchAll(/\trefs\/heads\/(page-\d+)$/gm),
-    (match) => match[1],
+  const current = `refs/tags/${process.env.PAGES_TAG}`;
+  const refs = git([
+    'ls-remote',
+    '--refs',
+    'origin',
+    'refs/tags/0.0.0-page.*',
+    'refs/heads/page-*',
+  ]);
+  const builds = Array.from(
+    refs.matchAll(/\t(refs\/(?:tags\/0\.0\.0-page\.|heads\/page-)(\d+))$/gm),
+    ([, ref, timestamp]) => ({ ref, timestamp: Number(timestamp) }),
   )
-    .filter((branch) => branch !== process.env.PAGES_BRANCH)
-    .sort((a, b) => Number(b.slice(5)) - Number(a.slice(5)));
-  for (const branch of branches.slice(2)) {
-    git(['push', 'origin', '--delete', branch]);
+    .filter(({ ref }) => ref !== current)
+    .sort((a, b) => b.timestamp - a.timestamp);
+  for (const { ref } of builds.slice(2)) {
+    git(['push', 'origin', '--delete', ref]);
   }
 };
 
