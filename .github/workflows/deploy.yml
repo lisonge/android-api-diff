@@ -25,9 +25,6 @@ jobs:
         with:
           node-version: '26'
 
-      - name: Initialize CDN tag
-        run: node scripts/deploy.ts init
-
       - uses: pnpm/setup@v3
 
       - run: pnpm install --frozen-lockfile
@@ -35,9 +32,6 @@ jobs:
       - run: pnpm -F android-api-diff-web type-check && pnpm build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish build to the CDN tag
-        run: node scripts/deploy.ts publish
 
       - uses: nwtgck/actions-netlify@v4
         with:
@@ -51,6 +45,3 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-
-      - name: Keep current build and two previous builds
-        run: node scripts/deploy.ts cleanup
